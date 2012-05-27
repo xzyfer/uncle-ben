@@ -1,19 +1,21 @@
 {
-  "author": "xzyfer <xzyfer@gmail.com> (xzyfer.com)",
   "name": "uncle-ben",
-  "version": "0.0.0",
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/xzyfer/uncle-ben.git"
-  },
+  "version": "0.0.1",
+  "private": true,
   "dependencies": {
-    "express": "~2.5.9",
-    "shelljs": "0.0.6pre2",
-    "pretty-data": "~0.30.3"
+    "express": "2.5.8",
+    "jade": ">= 0.0.1",
+    "pretty-data": "~0.30.3",
+    "shelljs": "0.0.6pre2"
   },
   "devDependencies": {},
   "optionalDependencies": {},
   "engines": {
     "node": "*"
+  },
+  "author": "xzyfer <xzyfer@gmail.com> (xzyfer.com)",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/xzyfer/uncle-ben.git"
   }
 }
