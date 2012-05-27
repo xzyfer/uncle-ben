@@ -1,0 +1,19 @@
+{
+  "author": "xzyfer <xzyfer@gmail.com> (xzyfer.com)",
+  "name": "uncle-ben",
+  "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/xzyfer/uncle-ben.git"
+  },
+  "dependencies": {
+    "express": "~2.5.9",
+    "shelljs": "0.0.6pre2",
+    "pretty-data": "~0.30.3"
+  },
+  "devDependencies": {},
+  "optionalDependencies": {},
+  "engines": {
+    "node": "*"
+  }
+}
