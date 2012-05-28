@@ -6,7 +6,8 @@
     "express": "2.5.8",
     "jade": "~0.26.0",
     "pretty-data": "~0.30.3",
-    "shelljs": "0.0.6pre2"
+    "shelljs": "0.0.6pre2",
+    "mongodb": "~1.0.2"
   },
   "devDependencies": {},
   "optionalDependencies": {},
