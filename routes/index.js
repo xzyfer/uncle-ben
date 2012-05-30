@@ -5,7 +5,7 @@
 
 var shell = require('shelljs')
   , pretty = require('pretty-data').pd
-  , mongodb = require('mongodb')
+  , profiles = require('../models/profiles')
 ;
 
 exports.index = function(req, res){
@@ -13,20 +13,11 @@ exports.index = function(req, res){
 	var cmd = 'phantomjs ~/netsniff.js "' + url + '"';
 	var result = pretty.jsonmin(shell.exec(cmd, {silent:true}).output);
 
-	req.db().open(function(err, client) {
-		if(err) console.log(err.message);
+	connection = req.connectToDb();
 
-		client.createCollection('test_collection', function(err, collection) {
-			if(err) console.log(err.message);
-
-			client.collection('test_collection', function(err, collection) {
-				if(err) console.log(err.message);
-
-				collection.insert(JSON.parse(result), {});
-
-				client.close();
-			});
-		});
+	var profile = new profiles.model(JSON.parse(result)).save(function (err) {
+		if(err) new Error(err.message);
+		connection.close();
 	});
 
 	res.render('index', { title: 'Express', url: url, result: result });

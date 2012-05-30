@@ -5,7 +5,7 @@
 
 var express = require('express')
   , routes = require('./routes')
-  , mongodb = require('mongodb')
+  , mongoose = require('mongoose')
 ;
 
 var app = module.exports = express.createServer();
@@ -16,8 +16,8 @@ app.configure(function(){
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
   app.use(function(req, res, next) {
-    req.db = (function() {
-      return new mongodb.Db('test', new mongodb.Server('127.0.0.1', 27017, {}), {});
+    req.connectToDb = (function() {
+      return mongoose.connect('127.0.0.1', 'test', 27017, {});
     });
     next();
   });
