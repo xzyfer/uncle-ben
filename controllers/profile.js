@@ -16,6 +16,5 @@ exports.create = function(req, res, next) {
 		connection.connections[0].close();
 	});
 
-	res.render('index', { title: 'Express', url: url, result: result });
-	next();
+	res.render('profile/create', { title: 'Express', url: url, result: result });
 };

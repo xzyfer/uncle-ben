@@ -49,16 +49,16 @@ describe('GET /profiles?url=http://example.com', function() {
 			}
 		});
 
-		profiles.create(request, response, function() {
-			response.viewName.should.equal('index');
-			response.should.be.a('object');
-			response.should.have.property('data');
+		profiles.create(request, response)
 
-			// response.data.should.be.a('object');
-			// response.data.should.have.property('result');
-			// response.data.result.should.equal(JSON.parse(json.output));
-			done();
-		});
+		response.viewName.should.equal('profile/create');
+		response.should.be.a('object');
+		response.should.have.property('data');
+
+		// response.data.should.be.a('object');
+		// response.data.should.have.property('result');
+		// response.data.result.should.equal(JSON.parse(json.output));
+		done();
 
 	})
 })
