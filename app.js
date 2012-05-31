@@ -4,11 +4,18 @@
  */
 
 var express = require('express')
-  , routes = require('./routes')
+  , controllers = require('./controllers')
   , mongoose = require('mongoose')
 ;
 
 var app = module.exports = express.createServer();
+
+// Resources
+
+app.resource = function(path, obj) {
+  this.get(path, obj.create);
+  // this.get(path + '/:id', obj.show);
+};
 
 // Configuration
 
@@ -37,7 +44,7 @@ app.configure('production', function(){
 
 // Routes
 
-app.get('/get', routes.index);
+app.resource('/profiles', controllers.Profiles);
 
 app.listen(3000, function(){
   console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
