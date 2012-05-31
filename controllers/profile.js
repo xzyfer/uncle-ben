@@ -3,6 +3,11 @@ var shell = require('shelljs')
   , profiles = require('../models/profiles')
 ;
 
+exports.new = function(req, res, next) {
+
+	res.render('profile/new', {title: 'New profile'});
+}
+
 exports.create = function(req, res, next) {
 	var url = req.param('url');
 	var cmd = 'phantomjs ~/netsniff.js "' + url + '"';
@@ -16,5 +21,8 @@ exports.create = function(req, res, next) {
 		connection.connections[0].close();
 	});
 
-	res.render('profile/create', { title: 'Express', url: url, result: result });
+	if(req.isXMLHttpRequest)
+		res.send(result);
+	else
+		res.render('profile/create', { title: 'Profile - ' + url, url: url, result: result });
 };

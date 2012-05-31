@@ -13,7 +13,8 @@ var app = module.exports = express.createServer();
 // Resources
 
 app.resource = function(path, obj) {
-  this.get(path, obj.create);
+  this.get(path, obj.new);
+  this.post(path, obj.create);
   // this.get(path + '/:id', obj.show);
 };
 
@@ -22,6 +23,9 @@ app.resource = function(path, obj) {
 app.configure(function(){
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
+  app.set('view options', {
+    layout: false
+  });
   app.use(function(req, res, next) {
     req.connectToDb = (function() {
       return mongoose.connect('127.0.0.1', 'test', 27017, {});

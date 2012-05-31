@@ -1,0 +1,23 @@
+extends ../layout
+
+
+block content
+
+	h1= title
+	form(method='post', action='')
+		input(type='url',value='http://')
+		input(type='submit', value='Profile!')
+	hr
+
+block scripts
+	script
+		$(function() {
+			$('form').on('submit', function() {
+				var $elem = $(this);
+				$.post($elem.attr('action'), $elem.serialize(), function(result) {
+					var $code = $('<code />').text(JSON.stringify(result));
+					$('body').append($code);
+				}, 'json');
+				return false;
+			});
+		});

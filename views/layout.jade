@@ -3,4 +3,10 @@ html
   head
     title= title
     link(rel='stylesheet', href='/stylesheets/style.css')
-  body!= body
+    block head
+  body
+    block content
+
+    script(src='//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')
+
+    block scripts
