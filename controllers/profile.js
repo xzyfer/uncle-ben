@@ -1,6 +1,8 @@
 
 var shell = require('shelljs')
+  , sha1 = require('sha1')
   , profiles = require('../models/profiles')
+  , timings = require('../models/timings')
 ;
 
 exports.new = function(req, res, next) {
@@ -13,10 +15,20 @@ exports.create = function(req, res, next) {
 
 	var output = shell.exec(cmd, {silent:true}).output;
 	var result = JSON.parse(output);
+	var timing = {
+		hash: sha1(result.log.pages[0].id),
+		onContentLoad: result.log.pages[0].pageTimings.onContentLoad,
+		onLoad: result.log.pages[0].pageTimings.onLoad,
+	};
 
 	var connection = req.connectToDb();
 
 	var profile = new profiles.model(result).save(function (err) {
+		if(err) new Error(err.message);
+		connection.connections[0].close();
+	});
+
+	var timing = new timings.model(timing).save(function (err) {
 		if(err) new Error(err.message);
 		connection.connections[0].close();
 	});

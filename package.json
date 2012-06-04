@@ -7,7 +7,8 @@
     "jade": "~0.26.0",
     "pretty-data": "~0.30.3",
     "shelljs": "0.0.6pre2",
-    "mongodb": "~1.0.2"
+    "mongodb": "~1.0.2",
+    "sha1": "0.0.1"
   },
   "devDependencies": {
     "nodemon": "~0.6.18",
