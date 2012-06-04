@@ -57,7 +57,12 @@ exports.create = function(req, res, next) {
                 if(req.isXMLHttpRequest)
                     res.send(result);
                 else
-                    res.render('profile/create', { title: 'Profile - ' + url, url: url, result: result });
+                    res.render('profile/create', {
+                        title: 'Profile - ' + url
+                      , url: url
+                      , hash: timingHash
+                      , result: result
+                    });
             });
         });
     });

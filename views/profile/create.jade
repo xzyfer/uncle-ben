@@ -1,4 +1,8 @@
 h1= title
-p Welcome to #{title}
 p You were tyring to look at #{url}
-code #{result}
+p View all runs for&nbsp;
+    a(href='/profiles/#{hash}') #{url}
+
+hr
+
+code #{JSON.stringify(result)}
