@@ -21,6 +21,7 @@ app.resource = function(path, obj) {
 // Configuration
 
 app.configure(function(){
+  app.set('helpers', __dirname + '/helpers');
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
   app.set('view options', {

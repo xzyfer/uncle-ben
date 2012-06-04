@@ -4,13 +4,12 @@ var shell = require('shelljs')
 ;
 
 exports.new = function(req, res, next) {
-
 	res.render('profile/new', {title: 'New profile'});
 }
 
 exports.create = function(req, res, next) {
 	var url = req.param('url');
-	var cmd = 'phantomjs ~/netsniff.js "' + url + '"';
+	var cmd = 'phantomjs ' + req.app.set('helpers') + '/netsniff.js "' + url + '"';
 
 	var result = JSON.parse(shell.exec(cmd, {silent:true}).output);
 
