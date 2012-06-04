@@ -12,7 +12,7 @@ if (!Date.prototype.toISOString) {
     }
 }
 
-function createHAR(address, title, startTime, resources)
+function createHAR(address, title, timings, resources)
 {
     var entries = [];
 
@@ -74,18 +74,32 @@ function createHAR(address, title, startTime, resources)
                     '.' + phantom.version.patch
             },
             pages: [{
-                startedDateTime: startTime.toISOString(),
+                startedDateTime: timings['startTime'].toISOString(),
                 id: address,
                 title: title,
-                pageTimings: {}
+                pageTimings: {
+                    "onContentLoad": timings['contentLoadedTime'].getTime(),
+                    "onLoad": timings['endTime'].getTime()
+                }
             }],
             entries: entries
         }
     };
 }
 
+// HACK: remove when upgrading to phantom js 1.6
+// source: http://stackoverflow.com/a/9838239/233633
+function evaluate(page, func) {
+    var args = [].slice.call(arguments, 2);
+    var fn = "function() { return (" + func.toString() + ").apply(this, " + JSON.stringify(args) + ");}";
+    return page.evaluate(fn);
+}
+
+const PHANTOM_FUNCTION_PREFIX = '/* PHANTOM_FUNCTION */';
+
 var page = require('webpage').create(),
-    system = require('system');
+    system = require('system'),
+    timings = {};
 
 if (system.args.length === 1) {
     console.log('Usage: netsniff.coffee <some URL>');
@@ -96,7 +110,7 @@ if (system.args.length === 1) {
     page.resources = [];
 
     page.onLoadStarted = function () {
-        page.startTime = new Date();
+        timings.startTime = new Date();
     };
 
     page.onResourceRequested = function (req) {
@@ -116,7 +130,32 @@ if (system.args.length === 1) {
         }
     };
 
+    page.onInitialized = function() {
+        // use page evaluate when upgraded to phantomjs 1.6
+        // source: https://gist.github.com/2475509/84e42ef8ce630680e373510f808f958354bf98f2
+        evaluate(page, function(domContentLoadedMsg) {
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log(domContentLoadedMsg);
+            }, false);
+        }, PHANTOM_FUNCTION_PREFIX + page.onDOMContentLoaded);
+    };
+
+    page.onConsoleMessage = function(msg) {
+        if (msg.indexOf(PHANTOM_FUNCTION_PREFIX) === 0) {
+            eval('(' + msg + ')()');
+        } else {
+            console.log(msg);
+        }
+    };
+
+    page.onDOMContentLoaded = function() {
+        timings.contentLoadedTime = new Date();
+    };
+
     page.open(page.address, function (status) {
+        // onload
+        timings.endTime = new Date();
+
         var har;
         if (status !== 'success') {
             console.log('FAIL to load the address');
@@ -124,7 +163,8 @@ if (system.args.length === 1) {
             page.title = page.evaluate(function () {
                 return document.title;
             });
-            har = createHAR(page.address, page.title, page.startTime, page.resources);
+
+            har = createHAR(page.address, page.title, timings, page.resources);
             console.log(JSON.stringify(har, undefined, 4));
         }
         phantom.exit();
