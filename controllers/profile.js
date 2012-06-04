@@ -19,7 +19,7 @@ exports.create = function(req, res, next) {
 
     var connection = req.connectToDb();
 
-    var profileHash = sha1(new Date().getTime());
+    var profileHash = sha1(new Date().getTime().toString());
     var timingHash = sha1(result.log.pages[0].id);
 
     // save the profile
