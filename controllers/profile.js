@@ -19,6 +19,7 @@ exports.create = function(req, res, next) {
 		hash: sha1(result.log.pages[0].id),
 		onContentLoad: result.log.pages[0].pageTimings.onContentLoad,
 		onLoad: result.log.pages[0].pageTimings.onLoad,
+		timeCreated: result.log.pages[0].startedDateTime
 	};
 
 	var connection = req.connectToDb();
