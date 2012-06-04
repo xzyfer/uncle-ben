@@ -1,11 +1,14 @@
 var Profile = function() {
   var mongoose = require('mongoose')
-    , schema = new mongoose.Schema({})
-    , _model = mongoose.model('Profile', schema)
+    , Schema = mongoose.Schema
+    , profileSchema = new mongoose.Schema({
+        log : { type: Schema.Types.Mixed }
+    })
+    , _model = mongoose.model('Profile', profileSchema)
   ;
 
   return {
-    schema: schema,
+    schema: profileSchema,
     model: _model
   };
 

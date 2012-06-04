@@ -9,7 +9,7 @@ var Timing = function() {
           hash            : { type: String, required: true, index: true }
         , onContentLoaded : { type: Schema.Types.Mixed, required: true }
         , onLoad          : { type: Schema.Types.Mixed, required: true }
-        , Profile         : Schema.ObjectId
+        , profile         : { type: Schema.ObjectId, required: true }
     })
     , _model = mongoose.model('Timing', timingSchema)
     ;
