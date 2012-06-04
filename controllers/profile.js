@@ -3,39 +3,62 @@ var shell = require('shelljs')
   , sha1 = require('sha1')
   , profiles = require('../models/profiles')
   , timings = require('../models/timings')
+  , _u = require('underscore')
 ;
 
 exports.new = function(req, res, next) {
-	res.render('profile/new', {title: 'New profile'});
+    res.render('profile/new', {title: 'New profile'});
 }
 
 exports.create = function(req, res, next) {
-	var url = req.param('url');
-	var cmd = 'phantomjs ' + req.app.set('helpers') + '/netsniff.js "' + url + '"';
+    var url = req.param('url');
+    var cmd = 'phantomjs ' + req.app.set('helpers') + '/netsniff.js "' + url + '"';
 
-	var output = shell.exec(cmd, {silent:true}).output;
-	var result = JSON.parse(output);
-	var timing = {
-		hash: sha1(result.log.pages[0].id),
-		onContentLoad: result.log.pages[0].pageTimings.onContentLoad,
-		onLoad: result.log.pages[0].pageTimings.onLoad,
-		timeCreated: result.log.pages[0].startedDateTime
-	};
+    var output = shell.exec(cmd, {silent:true}).output;
+    var result = JSON.parse(output);
 
-	var connection = req.connectToDb();
+    var connection = req.connectToDb();
 
-	var profile = new profiles.model(result).save(function (err) {
-		if(err) new Error(err.message);
-		connection.connections[0].close();
-	});
+    var profileHash = sha1(new Date().getTime());
+    var timingHash = sha1(result.log.pages[0].id);
 
-	var timing = new timings.model(timing).save(function (err) {
-		if(err) new Error(err.message);
-		connection.connections[0].close();
-	});
+    // save the profile
+    new profiles.model(_u.extend({ 'hash' : profileHash }, result)).save(function(err) {
+        if(err) {
+            connection.connections[0].close();
+            new Error(err.message);
+        }
 
-	if(req.isXMLHttpRequest)
-		res.send(result);
-	else
-		res.render('profile/create', { title: 'Profile - ' + url, url: url, result: result });
+        // fetch the saved profile
+        profiles.model.findOne({ 'hash' : profileHash }, function (err, profile) {
+            if(err) {
+                connection.connections[0].close();
+                new Error(err.message);
+            }
+
+            var timing = {
+                hash: timingHash
+              , onContentLoad: result.log.pages[0].pageTimings.onContentLoad
+              , onLoad: result.log.pages[0].pageTimings.onLoad
+              , timeCreated: result.log.pages[0].startedDateTime
+              , profile: profile.id
+            };
+
+            // save the simplified timing data
+            new timings.model(timing).save(function(err) {
+                if(err) {
+                    connection.connections[0].close();
+                    new Error(err.message);
+                }
+
+                connection.connections[0].close();
+
+                // return the response
+                if(req.isXMLHttpRequest)
+                    res.send(result);
+                else
+                    res.render('profile/create', { title: 'Profile - ' + url, url: url, result: result });
+            });
+        });
+    });
 };

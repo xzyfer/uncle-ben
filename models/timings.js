@@ -1,13 +1,23 @@
-var Timing = function() {
-  var mongoose = require('mongoose')
-    , schema = new mongoose.Schema({})
-    , _model = mongoose.model('Timing', schema)
-  ;
 
-  return {
-    schema: schema,
-    model: _model
-  };
+var Profile = require('../models/profiles')
+;
+
+var Timing = function() {
+    var mongoose = require('mongoose')
+      , Schema = mongoose.Schema
+      , timingSchema = new mongoose.Schema({
+          hash            : { type: String, required: true, index: true }
+        , onContentLoaded : { type: Schema.Types.Mixed, required: true }
+        , onLoad          : { type: Schema.Types.Mixed, required: true }
+        , Profile         : Schema.ObjectId
+    })
+    , _model = mongoose.model('Timing', timingSchema)
+    ;
+
+    return {
+        schema: timingSchema,
+        model: _model
+    };
 
 }();
 
