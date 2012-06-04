@@ -11,7 +11,8 @@ exports.create = function(req, res, next) {
 	var url = req.param('url');
 	var cmd = 'phantomjs ' + req.app.set('helpers') + '/netsniff.js "' + url + '"';
 
-	var result = JSON.parse(shell.exec(cmd, {silent:true}).output);
+	var output = shell.exec(cmd, {silent:true}).output;
+	var result = JSON.parse(output);
 
 	var connection = req.connectToDb();
 
