@@ -201,7 +201,14 @@ if (system.args.length === 1) {
     };
 
     page.onCookie = function(str, resId) {
-        page.resources[resId].endReply.cookies = parseCookie(str);
+        var cookies = [];
+
+        var temp = parseCookie(str);
+        for (var prop in temp) {
+             cookies.push({ 'name' : prop, 'value' : temp[prop]})
+        }
+
+        page.resources[resId].endReply.cookies = cookies;
     };
 
     page.onDOMContentLoaded = function() {
