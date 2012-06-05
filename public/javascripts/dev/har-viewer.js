@@ -79,14 +79,11 @@
             </tr>\
         </table>";
 
-        var cookiesTemplate = "<table>\
+        var cookiesTemplate = "<span>\
             {{#cookies}}\
-            <tr>\
-                <td>{{name}}:</td>\
-                <td>{{value}}</td>\
-            </tr>\
+                {{name}}: {{value}}<br>\
             {{/cookies}}\
-        </table>";
+        </span>";
 
         var timingsTemplate = "<span id='{{id}}-lpad' class='timelinePad' style='width:{{timings._lpad}}%'></span><span\
           id='{{id}}-blocked' class='timelineSlice timelineBlocked' style='width:{{timings.blocked}}%'></span><span\

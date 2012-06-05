@@ -1,7 +1,7 @@
 .har .method {
     text-align: left;
     text-transform: uppercase;
-    max-width: 1em;
+    width: 40px;
 }
 
 .har .url {
@@ -36,6 +36,11 @@
     border-bottom: 1px solid #efefef;
     font-family: Lucida Grande, Tahoma, sans-serif;
     font-size: 10pt;
+}
+
+.har .request > span,
+.har .request > span .time {
+    display: inline-block;
 }
 
 .har .timelineBar {
@@ -131,7 +136,7 @@
 }
 
 .har span.time {
-    width: 8em;
+    width: 3em;
     text-align: right;
 }
 
@@ -183,4 +188,13 @@
 .har .summary {
     padding-top: 8px;
     font-weight: bold;
+}
+
+.har .details table {
+    margin: 1em 0;
+}
+
+.har .details td:first-child {
+    width: 140px;
+    vertical-align: top;
 }
