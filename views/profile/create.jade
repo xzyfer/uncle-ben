@@ -1,8 +1,23 @@
-h1= title
-p You were tyring to look at #{url}
-p View all runs for&nbsp;
-    a(href='/profiles/#{hash}') #{url}
+extends ../layout
 
-hr
+block head
+    link(rel='stylesheet', href='/stylesheets/ui-smoothness/jquery-ui-1.8.20.custom.css')
+    link(rel='stylesheet', href='/stylesheets/har-viewer.css')
 
-code #{JSON.stringify(result)}
+block content
+    h1= title
+    p You were tyring to look at #{url}
+    p View all runs for&nbsp;
+        a(href='/profiles/#{hash}') #{url}
+    hr
+    #code
+
+block scripts
+    script(src='/javascripts/jquery-ui-1.8.20.custom.min.js')
+    script(src='/javascripts/mustache-0.4.2.min.js')
+    script(src='/javascripts/dev/har-viewer.js')
+    script
+        $(function() {
+            var json = !{JSON.stringify(result)};
+            $('#code').HarView().data('HarView').render(json);
+        });
