@@ -73,6 +73,19 @@
                 <td>{{value}}</td>\
             </tr>\
             {{/headers}}\
+            <tr>\
+                <td>Cookies:</td>\
+                <td id='{{id}}-{{type}}-cookies'></td>\
+            </tr>\
+        </table>";
+
+        var cookiesTemplate = "<table>\
+            {{#cookies}}\
+            <tr>\
+                <td>{{name}}:</td>\
+                <td>{{value}}</td>\
+            </tr>\
+            {{/cookies}}\
         </table>";
 
         var timingsTemplate = "<span id='{{id}}-lpad' class='timelinePad' style='width:{{timings._lpad}}%'></span><span\
@@ -291,6 +304,9 @@
             if(response.headers) {
                 _updateHeaders(id, false, response.headers);
             }
+            if(response.cookies) {
+                _updateCookies(id, false, response.cookies);
+            }
             if(response.content && response.content.text) {
                 _updateField('#' + id + '-resp-body', response.content.text);
                 _updateField('#' + id + '-bodySize', response.bodySize);
@@ -308,10 +324,20 @@
 
         var _updateHeaders = function (id, isRequest, headers) {
             var html = Mustache.to_html(headersTemplate, {
+                id: id,
+                type: isRequest ? 'req' : 'resp',
                 headers: headers
             });
 
             $('#' + id + (isRequest ? '-req-headers' : '-resp-headers')).append($(html));
+        }
+
+        var _updateCookies = function (id, isRequest, cookies) {
+            var html = Mustache.to_html(cookiesTemplate, {
+                cookies: cookies
+            });
+
+            $('#' + id + (isRequest ? '-req-cookies' : '-resp-cookies')).append($(html));
         }
 
         var _updateQueryString = function (id, queryString) {
