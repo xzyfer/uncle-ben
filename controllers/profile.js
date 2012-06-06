@@ -109,7 +109,7 @@ exports.show = function(req, res, next) {
             connection.connections[0].close();
 
             if(format === undefined) {
-                res.render('profile/create', {
+                res.render('profile/show', {
                     title: 'Profile - ' + url
                   , url: url
                   , hash: hash
