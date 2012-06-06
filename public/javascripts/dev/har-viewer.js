@@ -92,7 +92,10 @@
           id='{{id}}-send' class='timelineSlice timelineSend' style='width:{{timings.send}}%'></span><span\
           id='{{id}}-wait' class='timelineSlice timelineWait' style='width:{{timings.wait}}%'></span><span\
           id='{{id}}-receive' class='timelineSlice timelineReceive' style='width:{{timings.receive}}%'></span><span\
-          id='{{id}}-rpad' class='timelinePad' style='width:{{timings._rpad}}%'></span>";
+          id='{{id}}-rpad' class='timelinePad' style='width:{{timings._rpad}}%'></span><span\
+          class='timelineSlice timelineDomComplete'></span><span\
+          class='timelineSlice timelineLoad'></span>\
+          ";
 
         $(element).addClass('har');
         $(element).append($(summaryTemplate));
@@ -100,6 +103,7 @@
         var log = {
             entries: {}
         };
+        var harrr = {};
         var totals = {};
         var pads = {};
         var left, right;
@@ -110,6 +114,7 @@
         var totalTime = 0;
 
         this.render = function(har) {
+            harrr = har;
             var that = this;
             var pageref;
             $.each(har.log.entries, function (index, entry) {
@@ -346,6 +351,8 @@
         }
 
         var _updateAllTimings = function () {
+            var page = harrr.log.pages[0];
+
             $.each(log.entries, function (id, data) {
                 if(data.timings) {
                     var total = 0;
@@ -373,6 +380,12 @@
                     $('#' + id + '-rpad').width(pads[id][1] * frac + '%');
                 }
             });
+
+            var onContentLoaded = ((page.pageTimings.onContentLoad) / totalTime) * 100;
+            var onLoad = ((page.pageTimings.onLoad) / totalTime) * 100;
+
+            $('.timelineDomComplete').css('left', onContentLoaded + '%');
+            $('.timelineLoad').css('left', onLoad + '%');
         }
     };
 

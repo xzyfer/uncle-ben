@@ -1,10 +1,27 @@
-.har .method {
+
+.har .request .plus,
+.har .request .method,
+.har .request .url,
+.har .request .status,
+.har .request .statusText,
+.har .request .bodySize,
+.har .request .time {
+    display: inline-block;
+}
+
+.har .request {
+    border-bottom: 1px solid #efefef;
+    font-family: Lucida Grande, Tahoma, sans-serif;
+    font-size: 10pt;
+}
+
+.har .request .method {
     text-align: left;
     text-transform: uppercase;
     width: 40px;
 }
 
-.har .url {
+.har .request .url {
     display: inline-block;
     overflow: hidden;
     border-right: 1px solid grey;
@@ -12,12 +29,16 @@
     white-space: nowrap;
 }
 
-.har .status {
+.har .request .status {
     max-width: 3em;
     text-align: right;
 }
 
-.har .bodySize {
+.har .request .statusText {
+    display: none;
+}
+
+.har .request .bodySize {
     text-align: right;
     width: 3em;
     white-space: nowrap;
@@ -32,21 +53,11 @@
     border-bottom: 2px solid #a9a9a9;
 }
 
-.har .request {
-    border-bottom: 1px solid #efefef;
-    font-family: Lucida Grande, Tahoma, sans-serif;
-    font-size: 10pt;
-}
-
-.har .request > span,
-.har .request > span .time {
-    display: inline-block;
-}
-
 .har .timelineBar {
     white-space: nowrap;
     width: 400px;
     display: inline-block;
+    position: relative;
 }
 
 .har .timelinePad {
@@ -56,6 +67,9 @@
 
 .har .timelineSlice {
     box-shadow: 0 0 1px #888888;
+    margin: 0;
+    height: 11pt;
+    display: inline-block;
 }
 
 .har .timelineWaiting {
@@ -104,10 +118,18 @@
     display: block;
 }
 
-.har span.timelineSlice {
-    margin: 0;
-    height: 11pt;
-    display: inline-block;
+.har .timelineDomComplete {
+    background-color: red;
+    border: 1px solid red;
+    position: absolute;
+    height: 20px;
+}
+
+.har .timelineLoad {
+    background-color: blue;
+    border: 1px solid blue;
+    position: absolute;
+    height: 20px;
 }
 
 .har .plus {
