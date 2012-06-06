@@ -15,7 +15,9 @@ var app = module.exports = express.createServer();
 app.resource = function(path, obj) {
   this.get(path, obj.new);
   this.post(path, obj.create);
-  this.get(path + '/:hash', obj.list);
+  // this.get(path + '/:hash', obj.list);
+  this.get(path + '/:hash.:format', obj.show);
+  this.get(path + '/:hash', obj.show);
 };
 
 // Configuration

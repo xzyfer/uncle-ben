@@ -57,12 +57,7 @@ exports.create = function(req, res, next) {
                 if(req.isXMLHttpRequest)
                     res.send(result);
                 else
-                    res.render('profile/create', {
-                        title: 'Profile - ' + url
-                      , url: url
-                      , hash: timingHash
-                      , result: result
-                    });
+                    res.redirect('/profiles/' + timingHash);
             });
         });
     });
@@ -91,3 +86,39 @@ exports.list = function(req, res, next) {
         });
     });
 }
+
+exports.show = function(req, res, next) {
+    var hash = req.param('hash');
+    var format = req.param('format');
+    var connection = req.connectToDb();
+
+    timings.model.find({ 'hash' : hash }, function (err, timings) {
+        if(err) {
+            connection.connections[0].close();
+            new Error(err.message);
+        }
+
+        profiles.model.findById(timings[0].profile, function(err, profile) {
+            if(err) {
+                connection.connections[0].close();
+                new Error(err.message);
+            }
+
+            var url = profile.log.pages[0].id;
+
+            connection.connections[0].close();
+
+            if(format === undefined) {
+                res.render('profile/create', {
+                    title: 'Profile - ' + url
+                  , url: url
+                  , hash: hash
+                });
+            }
+            if(format === 'json')
+                res.send(JSON.stringify(profile));
+            if(format === 'jsonp')
+                res.send(req.query.callback + '({log:' + JSON.stringify(profile.log) + '});');
+        });
+    });
+};

@@ -10,14 +10,33 @@ block content
     p View all runs for&nbsp;
         a(href='/profiles/#{hash}') #{url}
     hr
+    //.har(data-har='http://localhost:3000/profiles/#{hash}.jsonp', height="300px")
     #code
 
 block scripts
+
+    //
+        script
+            (function() {
+                var har = document.createElement("script");
+                har.src = "http://www.softwareishard.com/har/viewer/har.js";
+                har.setAttribute("id", "har");
+                har.setAttribute("async", "true");
+                document.documentElement.firstChild.appendChild(har);
+            })();
+
     script(src='/javascripts/jquery-ui-1.8.20.custom.min.js')
     script(src='/javascripts/mustache-0.4.2.min.js')
     script(src='/javascripts/dev/har-viewer.js')
     script
         $(function() {
-            var json = !{JSON.stringify(result)};
-            $('#code').HarView().data('HarView').render(json);
+            $.ajax({
+                dataType: 'jsonp',
+                jsonp: 'callback',
+                url: 'http://localhost:3000/profiles/#{hash}.jsonp',
+                success: function(data) {
+                    console.log(data);
+                    $('#code').HarView().data('HarView').render(data);
+                }
+            });
         });
