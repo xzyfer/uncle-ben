@@ -4,12 +4,13 @@ block head
     link(rel='stylesheet', href='/stylesheets/ui-smoothness/jquery-ui-1.8.20.custom.css')
     link(rel='stylesheet', href='/stylesheets/har-viewer.css')
 
-block content
-    h1= title
+block header
     p You were tyring to look at #{url}
     p View all runs for&nbsp;
-        a(href='/profiles/#{hash}/history') #{url}
-    hr
+        a(href='/profiles/#{urlHash}/history') #{url}
+
+block content
+
     //.har(data-har='http://localhost:3000/profiles/#{hash}.jsonp', height="300px")
     #code
 

@@ -8,7 +8,7 @@ var shell = require('shelljs')
 ;
 
 exports.new = function(req, res, next) {
-    res.render('profile/new', {title: 'New profile'});
+    res.render('profile/new', {title: 'Uncle Ben'});
 };
 
 exports.create = function(req, res, next) {
@@ -21,7 +21,7 @@ exports.create = function(req, res, next) {
     var connection = req.connectToDb();
     var Profile = new profiles.model(result);
 
-    var data = {
+    var Timing = new timings.model({
         url             : url
       , time            : Profile.getTotalTime()
       , requestCount    : Profile.getRequestCount()
@@ -29,9 +29,7 @@ exports.create = function(req, res, next) {
       , onContentLoad   : Profile.getPage().pageTimings.onContentLoad
       , onLoad          : Profile.getPage().pageTimings.onLoad
       , timeCreated     : Profile.getPage().startedDateTime
-    };
-
-    var Timing = new timings.model(data);
+    });
 
     // save the timing data
     Timing.save(function(err) {
@@ -86,6 +84,7 @@ exports.show = function(req, res, next) {
                     title: 'Profile - ' + url
                   , url: url
                   , hash: hash
+                  , urlHash: record.urlHash
                 });
             }
             if(format === 'json')
@@ -118,7 +117,7 @@ exports.recent = function(req, res, next) {
     var connection = req.connectToDb();
 
     profiles.model.find()
-        .sort('id', -1)
+        .sort('_id', -1)
         .populate('_creator')
         .limit(req.param('limit') || 5)
         .run(function(err, records) {

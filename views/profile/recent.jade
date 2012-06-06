@@ -2,17 +2,19 @@
 extends ../layout
 
 block content
-    table
-        tr
-            th url
-            th time
-            th requests
-            th size
-
-        each timing in timings
+    table.table.cycle.table-recent-profiles
+        thead.thead
             tr
-                td
-                    a(href='/profiles/#{timing.hash}') #{timing.url}
-                td #{timing.time}
-                td #{timing.requestCount}
-                td #{timing.weight}
+                th.th url
+                th.th time
+                th.th requests
+                th.th size
+
+        tbody.tbody
+            each timing in timings
+                tr
+                    td.td
+                        a(href='/profiles/#{timing.hash}') #{timing.url}
+                    td.td #{timing.time}
+                    td.td #{timing.requestCount}
+                    td.td #{timing.weight}

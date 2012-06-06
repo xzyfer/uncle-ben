@@ -445,10 +445,6 @@ td {
     margin-right: auto;
 }
 
-#content {
-    text-align: center;
-}
-
 .form {
     margin: 20px 0;
 }
@@ -462,6 +458,41 @@ td {
     background-color: #fff;
     box-shadow: 0 0 4px #ccc;
 }
+
+.thead tr {
+    background-color: #eee;
+    border-bottom: #ddd 1px solid;
+}
+
+.th, .td {
+    padding: 2px 4px;
+    text-align: left;;
+}
+
+.table.cycle tr:nth-child(even) {
+    background-color: #eee;
+}
+
+
+
+
+#header {
+    text-align: center;
+}
+
+#code {
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.table-recent-profiles {
+    width: 30em;
+}
+
+
+
+
 
 
 
