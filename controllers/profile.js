@@ -4,6 +4,7 @@ var shell = require('shelljs')
   , profiles = require('../models/profiles')
   , timings = require('../models/timings')
   , _u = require('underscore')
+  , microtime = require('microtime')
 ;
 
 exports.new = function(req, res, next) {
@@ -18,22 +19,16 @@ exports.create = function(req, res, next) {
     var result = JSON.parse(output);
 
     var connection = req.connectToDb();
-
-    var profileHash = sha1(new Date().getTime().toString());
-    var timingHash = sha1(result.log.pages[0].id);
-
-    var Profile = new profiles.model(_u.extend({ 'hash' : profileHash }, result));
+    var Profile = new profiles.model(result);
 
     var data = {
-        hash            : timingHash
-      , url             : url
+        url             : url
       , time            : Profile.getTotalTime()
-      , numRequests     : Profile.getRequestCount()
+      , requestCount    : Profile.getRequestCount()
       , weight          : Profile.getTotalSize()
       , onContentLoad   : Profile.getPage().pageTimings.onContentLoad
       , onLoad          : Profile.getPage().pageTimings.onLoad
       , timeCreated     : Profile.getPage().startedDateTime
-      // , profile         : Profile.id
     };
 
     var Timing = new timings.model(data);
@@ -60,7 +55,7 @@ exports.create = function(req, res, next) {
             if(req.isXMLHttpRequest)
                 res.send(result);
             else
-                res.redirect('/profiles/' + timingHash);
+                res.redirect('/profiles/' + Timing.hash);
         });
     });
 };
@@ -70,13 +65,13 @@ exports.show = function(req, res, next) {
     var format = req.param('format');
     var connection = req.connectToDb();
 
-    timings.model.find({ 'hash' : hash }, function (err, timings) {
+    timings.model.findOne({ 'hash' : hash }, function (err, record) {
         if(err) {
             connection.connections[0].close();
             new Error(err.message);
         }
 
-        profiles.model.findOne({ _creator: timings[0]._id }).run(function(err, profile) {
+        profiles.model.findOne({ _creator: record._id }).run(function(err, profile) {
             if(err) {
                 connection.connections[0].close();
                 new Error(err.message);
@@ -102,26 +97,19 @@ exports.show = function(req, res, next) {
 };
 
 exports.history = function(req, res, next) {
-    var hash = req.param('hash');
+    var hash = req.param('url_hash');
     var connection = req.connectToDb();
 
-    timings.model.find({ 'hash' : hash }, function (err, timings) {
+    timings.model.find({ 'urlHash' : hash }, function (err, records) {
         if(err) {
             connection.connections[0].close();
             new Error(err.message);
         }
 
-        profiles.model.findOne({ _creator: timings[0]._id }).run(function(err, profile) {
-            if(err) {
-                connection.connections[0].close();
-                new Error(err.message);
-            }
+        var url = records[0].url;
 
-            var url = profile.log.pages[0].id;
-
-            connection.connections[0].close();
-            res.render('profile/history', { title: 'Profile History - ' + url, url: url, timings: timings });
-        });
+        connection.connections[0].close();
+        res.render('profile/history', { title: 'Profile History - ' + url, url: url, timings: records });
     });
 };
 
@@ -139,17 +127,15 @@ exports.recent = function(req, res, next) {
                 new Error(err.message);
             }
 
-            var timings = _u.map(records, function(a) { return a._creator; });
-
             if(err) {
                 connection.connections[0].close();
                 new Error(err.message);
             }
 
             if(format === undefined)
-                res.render('profile/recent', { title: 'Recent profiles', timings: timings });
+                res.render('profile/recent', { title: 'Recent profiles', profiles: records });
             if(format === 'html')
-                res.render('profile/recent', { title: 'Recent profiles', timings: timings });
+                res.render('profile/recent', { title: 'Recent profiles', profiles: records });
             if(format === 'json')
                 res.send(timings);
         });

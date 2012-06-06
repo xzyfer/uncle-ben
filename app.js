@@ -15,9 +15,12 @@ var app = module.exports = express.createServer();
 app.resource = function(path, obj) {
   this.get(path, obj.new);
   this.post(path, obj.create);
+
+  this.get(path + '/recent/:limit.:format?', obj.recent);
+  this.get(path + '/recent.:format?', obj.recent);
+
   this.get(path + '/:hash.:format?', obj.show);
-  this.get(path + '/:hash/history', obj.history);
-  this.get(path + '/recent/:limit?.:format?', obj.recent);
+  this.get(path + '/:url_hash/history', obj.history);
 };
 
 // Configuration

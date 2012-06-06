@@ -1,0 +1,18 @@
+
+extends ../layout
+
+block content
+    table
+        tr
+            th url
+            th time
+            th requests
+            th size
+
+        each profile in profiles
+            tr
+                td
+                    a(href='/profiles/#{profile._creator.hash}') #{profile._creator.url}
+                td #{profile._creator.time}
+                td #{profile._creator.requestCount}
+                td #{profile._creator.weight}
