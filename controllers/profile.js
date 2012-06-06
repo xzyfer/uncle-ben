@@ -63,30 +63,6 @@ exports.create = function(req, res, next) {
     });
 };
 
-exports.list = function(req, res, next) {
-    var hash = req.param('hash');
-    var connection = req.connectToDb();
-
-    timings.model.find({ 'hash' : hash }, function (err, timings) {
-        if(err) {
-            connection.connections[0].close();
-            new Error(err.message);
-        }
-
-        profiles.model.findById(timings[0].profile, function(err, profile) {
-            if(err) {
-                connection.connections[0].close();
-                new Error(err.message);
-            }
-
-            var url = profile.log.pages[0].id;
-
-            connection.connections[0].close();
-            res.render('profile/list', { title: 'Profile History - ' + url, url: url,  timings: timings });
-        });
-    });
-}
-
 exports.show = function(req, res, next) {
     var hash = req.param('hash');
     var format = req.param('format');
@@ -119,6 +95,30 @@ exports.show = function(req, res, next) {
                 res.send(JSON.stringify(profile));
             if(format === 'jsonp')
                 res.send(req.query.callback + '({log:' + JSON.stringify(profile.log) + '});');
+        });
+    });
+};
+
+exports.history = function(req, res, next) {
+    var hash = req.param('hash');
+    var connection = req.connectToDb();
+
+    timings.model.find({ 'hash' : hash }, function (err, timings) {
+        if(err) {
+            connection.connections[0].close();
+            new Error(err.message);
+        }
+
+        profiles.model.findById(timings[0].profile, function(err, profile) {
+            if(err) {
+                connection.connections[0].close();
+                new Error(err.message);
+            }
+
+            var url = profile.log.pages[0].id;
+
+            connection.connections[0].close();
+            res.render('profile/history', { title: 'Profile History - ' + url, url: url,  timings: timings });
         });
     });
 };
