@@ -1,17 +1,56 @@
+
+var Timing = require('../models/timings')
+;
+
 var Profile = function() {
-  var mongoose = require('mongoose')
-    , Schema = mongoose.Schema
-    , profileSchema = new mongoose.Schema({
-        log : { type: Schema.Types.Mixed }
-    })
-    , _model = mongoose.model('Profile', profileSchema)
-  ;
+    var mongoose = require('mongoose')
+      , Schema = mongoose.Schema
+      , profileSchema = new mongoose.Schema({
+            // _creator : { type: Schema.ObjectId, ref: 'Timing' }
+            log : { type: Schema.Types.Mixed }
+        })
+    ;
 
-  return {
-    schema: profileSchema,
-    model: _model
-  };
+    profileSchema.methods.getPage = function getPage () {
+        return this.log.pages[0];
+    }
 
+    profileSchema.methods.getEntries = function getEntries () {
+        return this.log.entries;
+    }
+
+    profileSchema.methods.getRequestCount = function getRequestCount () {
+        return this.getEntries().length;
+    }
+
+    profileSchema.methods.getTotalSize = function getTotalSize () {
+        var total = 0;
+
+        this.getEntries().forEach(function(element, index, array) {
+            for(k in element.timings) {
+                total += Math.max(0, element.timings[k]);
+            }
+        });
+
+        return total;
+    }
+
+    profileSchema.methods.getTotalTime = function getTotalTime () {
+        var total = 0;
+
+        this.getEntries().forEach(function(element, index, array) {
+            total += Math.max(0, element.response.bodySize);
+        });
+
+        return total;
+    }
+
+    var _model = mongoose.model('Profile', profileSchema);
+
+    return {
+        schema: profileSchema
+      , model: _model
+    };
 }();
 
 module.exports = Profile;
