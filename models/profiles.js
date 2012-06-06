@@ -1,13 +1,23 @@
 
+
 var Timing = require('../models/timings')
+  , sha1 = require('sha1')
+  , microtime = require('microtime')
 ;
 
 var Profile = function() {
     var mongoose = require('mongoose')
       , Schema = mongoose.Schema
       , profileSchema = new mongoose.Schema({
-            _creator : { type: Schema.ObjectId, ref: 'Timing' }
-          , log : { type: Schema.Types.Mixed }
+            _creator    : { type: Schema.ObjectId, ref: 'Timing' }
+          , hash        : { type: String, index: true }
+          , log         : { type: Schema.Types.Mixed }
+        })
+        .pre('save', function(next) {
+            if(this.hash === undefined) {
+                this.hash = sha1(microtime.nowDouble().toString());
+            }
+            next();
         })
     ;
 

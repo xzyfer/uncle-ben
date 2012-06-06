@@ -9,10 +9,10 @@ block content
             th requests
             th size
 
-        each profile in profiles
+        each timing in timings
             tr
                 td
-                    a(href='/profiles/#{profile._creator.hash}') #{profile._creator.url}
-                td #{profile._creator.time}
-                td #{profile._creator.requestCount}
-                td #{profile._creator.weight}
+                    a(href='/profiles/#{timing.hash}') #{timing.url}
+                td #{timing.time}
+                td #{timing.requestCount}
+                td #{timing.weight}

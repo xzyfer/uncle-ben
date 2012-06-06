@@ -127,15 +127,14 @@ exports.recent = function(req, res, next) {
                 new Error(err.message);
             }
 
-            if(err) {
-                connection.connections[0].close();
-                new Error(err.message);
-            }
+            timings = _u.map(records, function(record) {
+                return record._creator;
+            })
 
             if(format === undefined)
-                res.render('profile/recent', { title: 'Recent profiles', profiles: records });
+                res.render('profile/recent', { title: 'Recent profiles', timings: timings });
             if(format === 'html')
-                res.render('profile/recent', { title: 'Recent profiles', profiles: records });
+                res.render('profile/recent', { title: 'Recent profiles', timings: timings });
             if(format === 'json')
                 res.send(timings);
         });
