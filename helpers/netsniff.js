@@ -80,8 +80,8 @@ function createHAR(address, title, timings, resources)
                 id: address,
                 title: title,
                 pageTimings: {
-                    "onContentLoad": timings['contentLoadedTime'].getTime(),
-                    "onLoad": timings['endTime'].getTime()
+                    "onContentLoad": timings['contentLoadedTime'].getTime() - timings['startTime'].getTime(),
+                    "onLoad": timings['endTime'].getTime() - timings['startTime'].getTime()
                 }
             }],
             entries: entries
