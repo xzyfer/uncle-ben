@@ -13,7 +13,7 @@ exports.new = function(req, res, next) {
 
 exports.create = function(req, res, next) {
     var url = req.param('url');
-    var cmd = 'phantomjs --cookies-file=/tmp/uncle-ben/cookies.txt --web-security=no ' + req.app.set('helpers') + '/netsniff.js "' + url + '"';
+    var cmd = 'phantomjs ' + req.app.set('helpers') + '/netsniff.js "' + url + '"';
 
     var output = shell.exec(cmd, {silent:true}).output;
     var result = JSON.parse(output);
