@@ -52,7 +52,10 @@ function createHAR(address, title, timings, resources)
                     mimeType: endReply.contentType
                 }
             },
-            cache: {},
+            cache: {
+                beforeRequest: null,
+                afterRequest: null
+            },
             timings: {
                 blocked: 0,
                 dns: -1,
