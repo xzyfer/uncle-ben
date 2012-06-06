@@ -122,3 +122,30 @@ exports.history = function(req, res, next) {
         });
     });
 };
+
+exports.recent = function(req, res, next) {
+    var format = req.param('format');
+    var connection = req.connectToDb();
+
+    profiles.model.find().sort('id', -1).limit(req.param('limit') || 5).run(function(err, profiles) {
+        if(err) {
+            connection.connections[0].close();
+            new Error(err.message);
+        }
+
+        var profilesIds = _u.map(profiles, function(p) {
+            return p.id;
+        });
+
+        timings.model.find().$in('profile', profilesIds).run(function (err, timings) {
+            if(err) {
+                connection.connections[0].close();
+                new Error(err.message);
+            }
+
+            if(format === 'json') {
+                res.send(timings);
+            }
+        });
+    });
+};
