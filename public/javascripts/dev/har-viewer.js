@@ -31,11 +31,14 @@
             <span><span class='time' id='{{id}}-time'>0</span> msec</span>\
             <span class='timelineBar' id='{{id}}-timeline'></span>\
         </div>";
+
         var summaryTemplate = "<div id='summary' class='summary'>\
             <span class='reqCount' id='reqCount'></span>\
             <span class='reqSize' id='totalReqSize'></span>\
             <span class='respSize' id='totalRespSize'></span>\
             <span class='time' id='totalTime'></span>\
+            <span class='onDomLoaded' id='onDomLoaded'></span>\
+            <span class='onLoad' id='onLoad'></span>\
         </div>";
 
         var detailsTemplate = "<div class='details' id='{{id}}-details'>\
@@ -123,6 +126,9 @@
                     that.entry(index, entry);
                 }
             });
+
+            _updateField('#onDomLoaded', 'onDomLoaded ' + har.log.pages[0].pageTimings.onContentLoad + ' msec');
+            _updateField('#onLoad', 'onLoad ' + har.log.pages[0].pageTimings.onLoad + ' msec');
         }
 
         this.entry = function(id, entry) {
