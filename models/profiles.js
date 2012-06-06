@@ -6,8 +6,8 @@ var Profile = function() {
     var mongoose = require('mongoose')
       , Schema = mongoose.Schema
       , profileSchema = new mongoose.Schema({
-            // _creator : { type: Schema.ObjectId, ref: 'Timing' }
-            log : { type: Schema.Types.Mixed }
+            _creator : { type: Schema.ObjectId, ref: 'Timing' }
+          , log : { type: Schema.Types.Mixed }
         })
     ;
 
