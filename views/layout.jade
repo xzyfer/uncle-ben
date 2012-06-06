@@ -1,13 +1,14 @@
 !!!
 html
-  head
-    title= title
-    link(rel='stylesheet', href='/stylesheets/style.css')
-    block head
+    head
+        title= title
+        link(rel='stylesheet', href='/stylesheets/style.css')
+        block head
 
-  body
-    block content
+    body
+        #content
+            block content
 
-    script(src='//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')
+            script(src='//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')
 
-    block scripts
+            block scripts
