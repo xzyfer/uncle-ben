@@ -30,18 +30,24 @@ exports.create = function(req, res, next) {
         }
 
         // fetch the saved profile
-        profiles.model.findOne({ 'hash' : profileHash }, function (err, profile) {
+        profiles.model.findOne({ 'hash' : profileHash }, function (err, record) {
             if(err) {
                 connection.connections[0].close();
                 new Error(err.message);
             }
 
+            var Profile = new profiles.model(record);
+
             var timing = {
-                hash: timingHash
-              , onContentLoad: result.log.pages[0].pageTimings.onContentLoad
-              , onLoad: result.log.pages[0].pageTimings.onLoad
-              , timeCreated: result.log.pages[0].startedDateTime
-              , profile: profile.id
+                hash            : timingHash
+              , url             : url
+              , time            : Profile.getTotalTime()
+              , numRequests     : Profile.getRequestCount()
+              , weight          : Profile.getTotalSize()
+              , onContentLoad   : Profile.getPage().pageTimings.onContentLoad
+              , onLoad          : Profile.getPage().pageTimings.onLoad
+              , timeCreated     : Profile.getPage().startedDateTime
+              , profile         : Profile.id
             };
 
             // save the simplified timing data
