@@ -1,2 +1,26 @@
-h1= title
-h2 There have been #{timings.length} runs
+extends ../layout
+
+block header
+    h2 There have been #{timings.length} runs
+
+block content
+
+    table.table.cycle.center.table-profile-history
+        thead.thead
+            tr
+                th.th #
+                th.th DOM Ready
+                th.th Page Load
+                th.th First Byte
+                th.th Requests
+                th.th Size
+
+        tbody.tbody
+            each timing, i in timings
+                tr
+                    td.td #{i+1}
+                    td.td #{timing.onContentLoad}
+                    td.td #{timing.onLoad}
+                    td.td 1234
+                    td.td #{timing.requestCount}
+                    td.td #{timing.weight}
