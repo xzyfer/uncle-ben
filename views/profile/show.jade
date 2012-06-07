@@ -5,26 +5,42 @@ block head
     link(rel='stylesheet', href='/stylesheets/har-viewer.css')
 
 block header
-    p You were tyring to look at #{url}
+    p Ran on #{runDate.format('LLLL')} from uncleben1.99cluster.com (china)
+
     p View all runs for&nbsp;
         a(href='/profiles/#{urlHash}/history') #{url}
 
 block content
 
-    //.har(data-har='http://localhost:3000/profiles/#{hash}.jsonp', height="300px")
-    #code
+    ul.center.profile-summary-list
+        li.profile-summary-list-item.bad
+            p.summary-line DOM Ready
+            p.summary-line.prime 5.5s
+            p.summary-line.average +3s on avg
+        li.profile-summary-list-item.bad
+            p.summary-line Page Load
+            p.summary-line.prime 5.5s
+            p.summary-line.average +3s on avg
+        li.profile-summary-list-item.good
+            p.summary-line First Byte
+            p.summary-line.prime 5.5s
+            p.summary-line.average -0.3s on avg
+        li.profile-summary-list-item.good
+            p.summary-line Requests
+            p.summary-line.prime 5.5s
+            p.summary-line.average -2s on avg
+        li.profile-summary-list-item.bad
+            p.summary-line Size
+            p.summary-line.prime 5.5s
+            p.summary-line.average +3s on avg
+
+    style
+
+
+
+    #waterfall
 
 block scripts
-
-    //
-        script
-            (function() {
-                var har = document.createElement("script");
-                har.src = "http://www.softwareishard.com/har/viewer/har.js";
-                har.setAttribute("id", "har");
-                har.setAttribute("async", "true");
-                document.documentElement.firstChild.appendChild(har);
-            })();
 
     script(src='/javascripts/jquery-ui-1.8.20.custom.min.js')
     script(src='/javascripts/mustache-0.4.2.min.js')
@@ -36,8 +52,7 @@ block scripts
                 jsonp: 'callback',
                 url: 'http://localhost:3000/profiles/#{hash}.jsonp',
                 success: function(data) {
-                    console.log(data);
-                    $('#code').HarView().data('HarView').render(data);
+                    $('#waterfall').HarView().data('HarView').render(data);
                 }
             });
         });

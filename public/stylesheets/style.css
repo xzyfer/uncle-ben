@@ -492,6 +492,65 @@ td {
 
 
 
+.profile-summary-list {
+    margin: 20px 0;
+    padding: 0;
+}
+
+.profile-summary-list-item {
+    display: inline-block;
+    margin: 15px;
+}
+
+.profile-summary-list-item:first-child {
+    margin-left: 0;
+}
+
+.profile-summary-list-item:last-child {
+    margin-right: 0;
+}
+
+.summary-line {
+    margin: 10px 0;
+}
+
+.profile-summary-list-item .prime {
+    padding: 15px;
+    border: #000 2px solid;
+    font-size: 2em;
+    margin: 10px 0;
+}
+
+.profile-summary-list-item.good .prime {
+    background-color: rgba(37, 219, 37, 0.2);
+    border-color: rgba(37, 219, 37, 1);
+    color: rgba(37, 219, 37, 1);
+}
+
+.profile-summary-list-item.bad .prime {
+    background-color: rgba(255, 0, 0, 0.2);
+    border-color: rgba(255, 0, 0, 1);
+    color: rgba(255, 0, 0, 1);
+}
+
+.profile-summary-list-item .average {
+    font-size: 80%
+}
+
+.profile-summary-list-item.bad .average::after {
+    content: "=(";
+    display: inline-block;
+    margin-left: 10px;
+}
+
+.profile-summary-list-item.good .average::after {
+    content: "=)";
+    display: inline-block;
+    margin-left: 10px;
+}
+
+
+
 
 
 

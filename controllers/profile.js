@@ -5,6 +5,7 @@ var shell = require('shelljs')
   , timings = require('../models/timings')
   , _u = require('underscore')
   , microtime = require('microtime')
+  , moment = require('moment')
 ;
 
 exports.new = function(req, res, next) {
@@ -81,10 +82,11 @@ exports.show = function(req, res, next) {
 
             if(format === undefined) {
                 res.render('profile/show', {
-                    title: 'Profile - ' + url
+                    title: url
                   , url: url
                   , hash: hash
                   , urlHash: record.urlHash
+                  , runDate: moment(record.timeCreated)
                 });
             }
             if(format === 'json')
