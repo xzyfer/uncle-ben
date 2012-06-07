@@ -34,21 +34,13 @@ exports.create = function(req, res, next) {
 
     // save the timing data
     Timing.save(function(err) {
-        if(err) {
-            connection.connections[0].close();
-            new Error(err.message);
-        }
+        if(err) next(err);
 
         Profile._creator = Timing._id;
 
         // save the profile
         Profile.save(function(err) {
-            if(err) {
-                connection.connections[0].close();
-                new Error(err.message);
-            }
-
-            connection.connections[0].close();
+            if(err) next(err);
 
             // return the response
             if(req.isXMLHttpRequest)
@@ -65,20 +57,12 @@ exports.show = function(req, res, next) {
     var connection = req.connectToDb();
 
     timings.model.findOne({ 'hash' : hash }, function (err, record) {
-        if(err) {
-            connection.connections[0].close();
-            new Error(err.message);
-        }
+        if(err) next(err);
 
         profiles.model.findOne({ _creator: record._id }).run(function(err, profile) {
-            if(err) {
-                connection.connections[0].close();
-                new Error(err.message);
-            }
+            if(err) next(err);
 
             var url = profile.log.pages[0].id;
-
-            connection.connections[0].close();
 
             if(format === undefined) {
                 res.render('profile/show', {
@@ -102,14 +86,10 @@ exports.history = function(req, res, next) {
     var connection = req.connectToDb();
 
     timings.model.find({ 'urlHash' : hash }, function (err, records) {
-        if(err) {
-            connection.connections[0].close();
-            new Error(err.message);
-        }
+        if(err) next(err);
 
         var url = records[0].url;
 
-        connection.connections[0].close();
         res.render('profile/history', { title: 'Profile History - ' + url, url: url, timings: records });
     });
 };
@@ -123,10 +103,7 @@ exports.recent = function(req, res, next) {
         .populate('_creator')
         .limit(req.param('limit') || 5)
         .run(function(err, records) {
-            if(err) {
-                connection.connections[0].close();
-                new Error(err.message);
-            }
+            if(err) next(err);
 
             timings = _u.map(records, function(record) {
                 return record._creator;
