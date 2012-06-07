@@ -9,11 +9,11 @@ block content
         thead.thead
             tr
                 th.th #
-                th.th DOM Ready
-                th.th Page Load
-                th.th First Byte
+                th.th DOM Ready (ms)
+                th.th Page Load (ms)
+                th.th First Byte (ms)
                 th.th Requests
-                th.th Size
+                th.th Size (bytes)
 
         tbody.tbody
             each timing, i in timings
@@ -21,6 +21,6 @@ block content
                     td.td #{i+1}
                     td.td #{timing.onContentLoad}
                     td.td #{timing.onLoad}
-                    td.td 1234
+                    td.td #{timing.firstByte}
                     td.td #{timing.requestCount}
                     td.td #{timing.weight}

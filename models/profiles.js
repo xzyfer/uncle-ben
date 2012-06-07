@@ -29,6 +29,10 @@ var Profile = function() {
         return this.log.entries;
     }
 
+    profileSchema.methods.getEntry = function getEntry (index) {
+        return this.log.entries[index];
+    }
+
     profileSchema.methods.getRequestCount = function getRequestCount () {
         return this.getEntries().length;
     }

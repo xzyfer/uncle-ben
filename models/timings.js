@@ -11,6 +11,7 @@ var Timing = function() {
             hash            : { type: String, index: true }
           , urlHash         : { type: String, index: true }
           , url             : { type: String, required: true }
+          , firstByte       : { type: Number, required: true }
           , timeCreated     : { type: Date, required: true }
           , time            : { type: Number, required: true }
           , requestCount    : { type: Number, required: true }

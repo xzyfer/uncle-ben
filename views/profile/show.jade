@@ -14,24 +14,24 @@ block content
 
     ul.center.profile-summary-list
         li.profile-summary-list-item.bad
-            p.summary-line DOM Ready
-            p.summary-line.prime 5.5s
+            p.summary-line DOM Ready (ms)
+            p.summary-line.prime #{timing.onContentLoad}
             p.summary-line.average +3s on avg
         li.profile-summary-list-item.bad
-            p.summary-line Page Load
-            p.summary-line.prime 5.5s
+            p.summary-line Page Load (ms)
+            p.summary-line.prime #{timing.onLoad}
             p.summary-line.average +3s on avg
         li.profile-summary-list-item.good
-            p.summary-line First Byte
-            p.summary-line.prime 5.5s
+            p.summary-line First Byte (ms)
+            p.summary-line.prime #{timing.firstByte}
             p.summary-line.average -0.3s on avg
         li.profile-summary-list-item.good
             p.summary-line Requests
-            p.summary-line.prime 5.5s
+            p.summary-line.prime #{timing.requestCount}
             p.summary-line.average -2s on avg
         li.profile-summary-list-item.bad
-            p.summary-line Size
-            p.summary-line.prime 5.5s
+            p.summary-line Size (bytes)
+            p.summary-line.prime #{timing.weight}
             p.summary-line.average +3s on avg
 
     style

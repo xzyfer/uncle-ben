@@ -25,6 +25,7 @@ exports.create = function(req, res, next) {
     var Timing = new timings.model({
         url             : url
       , time            : Profile.getTotalTime()
+      , firstByte       : Profile.getEntry(0).timings.wait
       , requestCount    : Profile.getRequestCount()
       , weight          : Profile.getTotalSize()
       , onContentLoad   : Profile.getPage().pageTimings.onContentLoad
@@ -71,6 +72,7 @@ exports.show = function(req, res, next) {
                   , hash: hash
                   , urlHash: record.urlHash
                   , runDate: moment(record.timeCreated)
+                  , timing: record
                 });
             }
             if(format === 'json')
