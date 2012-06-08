@@ -17,6 +17,16 @@ var Profile = function() {
             if(this.hash === undefined) {
                 this.hash = sha1(microtime.nowDouble().toString());
             }
+            if(this.log.entries !== undefined)
+            {
+                (this.log.entries).sort(function(a, b) {
+                    var aT = new Date(a.startedDateTime).getTime();
+                    var bT = new Date(b.startedDateTime).getTime();
+
+                    if(aT === bT) return 0;
+                    return aT > bT ? 1 : -1;
+                });
+            }
             next();
         })
     ;

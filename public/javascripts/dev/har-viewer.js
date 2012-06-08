@@ -106,7 +106,6 @@
         var log = {
             entries: {}
         };
-        var harrr = {};
         var totals = {};
         var pads = {};
         var left, right;
@@ -115,9 +114,9 @@
         var totalReqSize = 0;
         var totalRespSize = 0;
         var totalTime = 0;
+        var maxTime = 0;
 
         this.render = function(har) {
-            harrr = har;
             var that = this;
             var pageref;
             $.each(har.log.entries, function (index, entry) {
@@ -129,6 +128,15 @@
 
             _updateField('#onDomLoaded', 'onDomLoaded ' + har.log.pages[0].pageTimings.onContentLoad + ' msec');
             _updateField('#onLoad', 'onLoad ' + har.log.pages[0].pageTimings.onLoad + ' msec');
+
+            var page = har.log.pages[0];
+            var end = maxTime - new Date(page.startedDateTime).getTime();
+
+            var onContentLoaded = ((page.pageTimings.onContentLoad / end) * 100);
+            var onLoad = ((page.pageTimings.onLoad / end) * 100);
+
+            $('.timelineDomComplete').css('left', onContentLoaded + '%');
+            $('.timelineLoad').css('left', onLoad + '%');
         }
 
         this.entry = function(id, entry) {
@@ -214,7 +222,6 @@
             else {
                 // Error otherwise
             }
-
         };
 
         this.response = function (id, response) {
@@ -357,8 +364,6 @@
         }
 
         var _updateAllTimings = function () {
-            var page = harrr.log.pages[0];
-
             $.each(log.entries, function (id, data) {
                 if(data.timings) {
                     var total = 0;
@@ -384,14 +389,10 @@
                     });
                     $('#' + id + '-lpad').width(pads[id][0] * frac + '%');
                     $('#' + id + '-rpad').width(pads[id][1] * frac + '%');
+
+                    maxTime = Math.max(maxTime, t + total);
                 }
             });
-
-            var onContentLoaded = ((page.pageTimings.onContentLoad) / totalTime) * 100;
-            var onLoad = ((page.pageTimings.onLoad) / totalTime) * 100;
-
-            $('.timelineDomComplete').css('left', onContentLoaded + '%');
-            $('.timelineLoad').css('left', onLoad + '%');
         }
     };
 
