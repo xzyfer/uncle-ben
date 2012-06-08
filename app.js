@@ -1,61 +1,23 @@
 
 /**
- * Module dependencies.
+ *  Load external modules / see readme for bundle instructions
  */
 
-var express = require('express')
-  , controllers = require('./controllers')
-  , mongoose = require('mongoose')
-;
 
-var app = module.exports = express.createServer();
+require('./lib/exceptions')
 
-// Resources
+if(!process.env.NODE_ENV) process.env.NODE_ENV="local"
 
-app.resource = function(path, obj) {
-  this.get(path, obj.new);
-  this.post(path, obj.create);
+//  Load boot file and fire away!
 
-  this.get(path + '/recent/:limit.:format?', obj.recent);
-  this.get(path + '/recent.:format?', obj.recent);
+var app = require('./config/app')();
+var port = process.env.PORT || 3000;
 
-  this.get(path + '/:hash.:format?', obj.show);
-  this.get(path + '/:url_hash/history', obj.history);
-};
+app.listen(port);
 
-// Configuration
-
-app.configure(function(){
-  app.set('helpers', __dirname + '/helpers');
-  app.set('views', __dirname + '/views');
-  app.set('view engine', 'jade');
-  app.set('view options', {
-    layout: false
-  });
-  app.use(function(req, res, next) {
-    req.connectToDb = (function() {
-      return mongoose.connect('127.0.0.1', 'test', 27017, {});
-    });
-    next();
-  });
-  app.use(express.bodyParser());
-  app.use(express.methodOverride());
-  app.use(app.router);
-  app.use(express.static(__dirname + '/public'));
-});
-
-app.configure('development', function(){
-  app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
-});
-
-app.configure('production', function(){
-  app.use(express.errorHandler());
-});
-
-// Routes
-
-app.resource('/profiles', controllers.Profiles);
-
-app.listen(3000, function(){
-  console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
-});
+console.log('\x1b[36mUncle Ben\x1b[90m v%s\x1b[0m running as \x1b[1m%s\x1b[0m on http://%s:%d',
+  app.set('version'),
+  app.set('env'),
+  app.set('host'),
+  app.address().port
+);

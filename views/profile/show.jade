@@ -8,7 +8,7 @@ block header
     p Ran on #{runDate.format('LLLL')} from uncleben1.99cluster.com (china)
 
     p View all runs for&nbsp;
-        a(href='/profiles/#{urlHash}/history') #{url}
+        a(href='/profile/#{urlHash}/history') #{url}
 
 block content
 
@@ -50,7 +50,7 @@ block scripts
             $.ajax({
                 dataType: 'jsonp',
                 jsonp: 'callback',
-                url: 'http://localhost:3000/profiles/#{hash}.jsonp',
+                url: 'http://localhost:3000/profile/#{hash}.jsonp',
                 success: function(data) {
                     $('#waterfall').HarView().data('HarView').render(data);
                 }

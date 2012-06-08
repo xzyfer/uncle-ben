@@ -12,7 +12,7 @@ block scripts
 
 	script
 		$(function() {
-			$.get('/profiles/recent.html', function(data) {
+			$.get('/profile/recent.html', function(data) {
 				$('#content').append($(data).find('table').addClass('center'));
 			}, 'html');
 		});
