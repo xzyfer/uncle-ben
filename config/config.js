@@ -41,6 +41,7 @@ module.exports = function(app){
                 'main': db
               , 'profiles': db.model('Profile')
               , 'timings': db.model('Timing')
+              , 'averages': db.model('Average')
             })
             .set('version', '0.0.1');
     });
