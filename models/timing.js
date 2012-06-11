@@ -23,12 +23,14 @@ var Timing = module.exports = new Schema({
   , onContentLoad   : { type: Schema.Types.Mixed, required: true }
   , onLoad          : { type: Schema.Types.Mixed, required: true }
   , profile         : { type: Schema.ObjectId, ref: 'Profile' }
+  // , average         : { type: Schema.ObjectId, ref: 'Average' }
 });
 
 urlMap = function() {
     emit(this.urlHash, {
         count         : 1
       , firstByte     : this.firstByte
+      , time          : this.time
       , onContentLoad : this.onContentLoad
       , onLoad        : this.onLoad
       , requestCount  : this.requestCount
@@ -37,26 +39,41 @@ urlMap = function() {
 }
 
 urlReduce = function(key, values) {
-    var result = { count: 0, firstByte: 0, onContentLoad: 0, onLoad: 0, requestCount: 0, weight: 0 };
+    var result = { count: 0, requestCount: 0 };
 
     values.forEach(function(value) {
         result.count += value.count;
 
         for(i in value) {
-            if(i !== 'count')
-                result[i] = (result[i] + value[i]) / result.count;
+            if(i !== 'count') {
+                result[i] = (result[i] || 0) + value[i];
+            }
         }
     });
 
     return result;
 }
 
+urlFinalize = function(key, value) {
+    for(i in value) {
+        if(i !== 'count') {
+            value[i] = value[i] / value.count;
+        }
+    }
+
+    return value;
+}
+
+// TODO: move this into an event hook
 Timing.post('save', function() {
     this.db.db.executeDbCommand({
         mapreduce: "timings"
       , query: { 'urlHash' : this.urlHash }
+      , sort: { '_id' : -1 }
+      , limit: 10
       , map: urlMap.toString()
       , reduce: urlReduce.toString()
+      , finalize: urlFinalize.toString()
       , out: 'averages'
     }, function(err, db) { });
 });
