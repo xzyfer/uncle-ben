@@ -65,6 +65,7 @@ controller.create = function(req, res, next) {
       , onContentLoad   : Profile.getPage().pageTimings.onContentLoad
       , onLoad          : Profile.getPage().pageTimings.onLoad
       , timeCreated     : Profile.getPage().startedDateTime
+      , profile         : Profile
     });
 
     Timing.save(function(err) {
@@ -85,11 +86,11 @@ controller.show = function(req, res, next) {
     var hash = req.param('hash');
     var format = req.param('format');
 
-    db.timings.findOne({ 'hash' : hash }, function (err, record) {
-        if (err) return next(err)
-
-        db.profiles.findOne({ _creator: record._id }).run(function(err, profile) {
-            if (err) return next(err)
+    db.timings
+        .findOne({ 'hash' : hash })
+        .populate('profile')
+        .run(function(err, record) {
+            if (err) return next(err);
 
             var url = profile.log.pages[0].id;
 
@@ -108,7 +109,6 @@ controller.show = function(req, res, next) {
             if(format === 'jsonp')
                 res.send(req.query.callback + '({log:' + JSON.stringify(profile.log) + '});');
         });
-    });
 };
 
 controller.history = function(req, res, next) {
@@ -125,7 +125,6 @@ controller.history = function(req, res, next) {
 
 controller.recent = function(req, res, next) {
     var format = req.param('format');
-    var connection = req.connectToDb();
 
     db.profiles.find()
         .sort('_id', -1)
