@@ -92,22 +92,31 @@ controller.show = function(req, res, next) {
         .run(function(err, record) {
             if (err) return next(err);
 
-            var url = profile.log.pages[0].id;
+            db.averages.findById(record.urlHash, function(err, average) {
+                if (err) return next(err);
 
-            if(format === undefined) {
-                res.render('profile/show', {
-                    title: url
-                  , url: url
-                  , hash: hash
-                  , urlHash: record.urlHash
-                  , runDate: moment(record.timeCreated)
-                  , timing: record
+                var difference = {};
+                _u.each(average.value, function(v, k) {
+                    if(_u.isNumber(v))
+                    difference[k] = parseInt(record[k] - v, 10);
                 });
-            }
-            if(format === 'json')
-                res.send(JSON.stringify(profile));
-            if(format === 'jsonp')
-                res.send(req.query.callback + '({log:' + JSON.stringify(profile.log) + '});');
+
+                if(format === undefined) {
+                    res.render('profile/show', {
+                        title: record.url
+                      , url: record.url
+                      , hash: hash
+                      , urlHash: record.urlHash
+                      , runDate: moment(record.timeCreated)
+                      , timing: record
+                      , difference: difference
+                    });
+                }
+                if(format === 'json')
+                    res.send(JSON.stringify(record.profile));
+                if(format === 'jsonp')
+                    res.send(req.query.callback + '({log:' + JSON.stringify(record.profile.log) + '});');
+            });
         });
 };
 
