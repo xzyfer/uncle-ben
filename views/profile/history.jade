@@ -5,6 +5,25 @@ block header
 
 block content
 
+    h3 Average
+
+    table.table.cycle.center.table-profile-history
+        thead.thead
+            tr
+                th.th DOM Ready (ms)
+                th.th Page Load (ms)
+                th.th First Byte (ms)
+                th.th Requests
+                th.th Size (bytes)
+
+        tbody.tbody
+            tr
+                td.td #{average.onContentLoad}
+                td.td #{average.onLoad}
+                td.td #{average.firstByte}
+                td.td #{average.requestCount}
+                td.td #{average.weight}
+
     table.table.cycle.center.table-profile-history
         thead.thead
             tr

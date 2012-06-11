@@ -124,11 +124,20 @@ controller.history = function(req, res, next) {
     var hash = req.param('url_hash');
 
     db.timings.find({ 'urlHash' : hash }, function (err, records) {
-        if (err) return next(err)
+        if (err) return next(err);
 
         var url = records[0].url;
 
-        res.render('profile/history', { title: 'Profile History - ' + url, url: url, timings: records });
+        db.averages.findById(hash, function(err, average) {
+            if (err) return next(err);
+
+            res.render('profile/history', {
+                title: 'Profile History - ' + url,
+                url: url,
+                timings: records,
+                average: average.value
+            });
+        });
     });
 };
 
