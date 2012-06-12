@@ -81,7 +81,7 @@ Timing.post('save', function() {
       , map: urlMap.toString()
       , reduce: urlReduce.toString()
       , finalize: urlFinalize.toString()
-      , out: 'averages'
+      , out: { merge : 'averages' }
     }, function(err, db) { });
 });
 
