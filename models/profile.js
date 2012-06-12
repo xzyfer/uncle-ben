@@ -33,7 +33,7 @@ Profile.methods.getRequestCount = function getRequestCount () {
     return this.getEntries().length;
 }
 
-Profile.methods.getTotalSize = function getTotalSize () {
+Profile.methods.getTotalTime = function getTotalTime () {
     var total = 0;
 
     this.getEntries().forEach(function(element, index, array) {
@@ -45,7 +45,7 @@ Profile.methods.getTotalSize = function getTotalSize () {
     return total;
 }
 
-Profile.methods.getTotalTime = function getTotalTime () {
+Profile.methods.getTotalSize = function getTotalSize () {
     var total = 0;
 
     this.getEntries().forEach(function(element, index, array) {
