@@ -53,13 +53,18 @@ Timing.methods.getPerf = function getTimes () {
 
 urlMap = function() {
     emit(this.urlHash, {
-        count         : 1
-      , firstByte     : this.firstByte
-      , time          : this.time
-      , onContentLoad : this.onContentLoad
-      , onLoad        : this.onLoad
-      , requestCount  : this.requestCount
-      , weight        : this.weight
+        count               : 1
+      , firstByte           : this.firstByte
+      , time                : this.time
+      , onContentLoad       : this.onContentLoad
+      , onLoad              : this.onLoad
+      , requestCount        : this.requestCount
+      , weight              : this.weight
+      , dbDomainObjectCount : this.dbDomainObjectCount
+      , dbQueryCount        : this.dbQueryCount
+      , dbReaderQueryCount  : this.dbReaderQueryCount
+      , dbWriterQueryCount  : this.dbWriterQueryCount
+      , dbRecordCount       : this.dbRecordCount
     });
 }
 

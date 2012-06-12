@@ -12,7 +12,10 @@ block header
 
 block content
 
+    h3.center Frontend
     != partial('_tiles', { 'items' : timing.getTimes(), 'difference' : difference })
+
+    h3.center Backend
     != partial('_tiles', { 'items' : timing.getPerf(), 'difference' : difference })
 
 
