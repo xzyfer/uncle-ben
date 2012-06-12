@@ -139,12 +139,16 @@ controller.history = function(req, res, next) {
         db.averages.findById(hash, function(err, average) {
             if (err) return next(err);
 
-            res.render('profile/history', {
-                title: 'Profile History - ' + url,
-                url: url,
-                timings: records,
-                average: average.value
-            });
+            if(format === undefined) {
+                res.render('profile/history', {
+                    title: 'Profile History - ' + url,
+                    url: url,
+                    timings: records,
+                    average: average.value
+                });
+            }
+            if(format === 'json')
+                res.send(JSON.stringify({ url : url, history : records, average : average.value }));
         });
     });
 };
