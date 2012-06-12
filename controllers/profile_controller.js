@@ -80,7 +80,10 @@ controller.create = function(req, res, next) {
         Profile.save(function(err) {
             if (err) return next(err)
 
-            res.redirect('/profile/' + Timing.hash);
+            if(formate === undefined)
+                res.redirect('/profile/' + Timing.hash);
+            if(format === 'json')
+                res.send(JSON.stringify({ result : 'ok', hash: profile.hash }));
         });
     });
 };

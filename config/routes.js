@@ -13,7 +13,7 @@ module.exports = function(app) {
     //  LoadRoutes
 
     app.get('/profile', profile.new);
-    app.post('/profile', profile.create);
+    app.post('/profile.:format?', profile.create);
     app.get('/profile/:hash.:format?', profile.show);
     app.get('/profile/:url_hash/history', profile.history);
     app.get('/profile/recent/:limit.:format?', profile.recent);
