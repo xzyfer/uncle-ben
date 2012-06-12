@@ -49,6 +49,7 @@ controller.new = function(req, res, next) {
  * @url /profile
  */
 controller.create = function(req, res, next) {
+    var format = req.param('format');
     var url = req.param('url');
     var cmd = 'phantomjs --cookies-file=/tmp/uncle-ben/cookies.txt ' + req.app.set('helpers') + '/netsniff.js "' + url + '"';
 
@@ -129,6 +130,7 @@ controller.show = function(req, res, next) {
 
 controller.history = function(req, res, next) {
     var hash = req.param('url_hash');
+    var format = req.param('format');
 
     db.timings.find({ 'urlHash' : hash }, function (err, records) {
         if (err) return next(err);
