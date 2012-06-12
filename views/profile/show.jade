@@ -23,7 +23,7 @@ block content
             li.profile-summary-list-item.good
                 p.summary-line DOM Ready (ms)
                 p.summary-line.prime #{timing.onContentLoad}
-                p.summary-line.average -#{difference.onContentLoad} on avg
+                p.summary-line.average #{difference.onContentLoad} on avg
 
         - if (difference.onLoad > 0)
             li.profile-summary-list-item.bad
@@ -34,7 +34,7 @@ block content
             li.profile-summary-list-item.good
                 p.summary-line Page Load (ms)
                 p.summary-line.prime #{timing.onLoad}
-                p.summary-line.average -#{difference.onLoad} on avg
+                p.summary-line.average #{difference.onLoad} on avg
 
         - if (difference.firstByte > 0)
             li.profile-summary-list-item.bad
@@ -45,7 +45,7 @@ block content
             li.profile-summary-list-item.good
                 p.summary-line First Byte (ms)
                 p.summary-line.prime #{timing.firstByte}
-                p.summary-line.average -#{difference.firstByte} on avg
+                p.summary-line.average #{difference.firstByte} on avg
 
         - if (difference.requestCount > 0)
             li.profile-summary-list-item.bad
@@ -56,7 +56,7 @@ block content
             li.profile-summary-list-item.good
                 p.summary-line Requests
                 p.summary-line.prime #{timing.requestCount}
-                p.summary-line.average -#{difference.requestCount} on avg
+                p.summary-line.average #{difference.requestCount} on avg
 
         - if (difference.weight > 0)
             li.profile-summary-list-item.bad
@@ -67,7 +67,7 @@ block content
             li.profile-summary-list-item.good
                 p.summary-line Size (bytes)
                 p.summary-line.prime #{timing.weight}
-                p.summary-line.average -#{difference.weight} on avg
+                p.summary-line.average #{difference.weight} on avg
 
     style
 
