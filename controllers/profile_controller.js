@@ -99,8 +99,9 @@ controller.show = function(req, res, next) {
 
                 var difference = {};
                 _u.each(average.value, function(v, k) {
-                    if(_u.isNumber(v))
-                    difference[k] = parseInt(record[k] - v, 10);
+                    if(_u.isNumber(v)) {
+                        difference[k] = parseInt(record[k] - v, 10);
+                    }
                 });
 
                 if(format === undefined) {

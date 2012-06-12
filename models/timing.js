@@ -33,6 +33,24 @@ var Timing = module.exports = new Schema({
   // , average             : { type: Schema.ObjectId, ref: 'Average' }
 });
 
+Timing.methods.getTimes = function getTimes () {
+    return [
+        { 'title' : 'DOM Ready',  'unit' : 'ms',    'value' : this.onContentLoad, 'key' : 'onContentLoad' }
+      , { 'title' : 'Page Load',  'unit' : 'ms',    'value' : this.onLoad,        'key' : 'onLoad' }
+      , { 'title' : 'First Byte', 'unit' : 'ms',    'value' : this.firstByte,     'key' : 'firstByte' }
+      , { 'title' : 'Requests',   'unit' : 'ms',    'value' : this.requestCount,  'key' : 'requestCount' }
+      , { 'title' : 'Size',       'unit' : 'bytes', 'value' : this.weight,        'key' : 'weight' }
+    ];
+};
+
+Timing.methods.getPerf = function getTimes () {
+    return [
+        { 'title' : 'Query Count',        'unit' : null,  'value' : this.dbQueryCount,        'key' : 'dbQueryCount' }
+      , { 'title' : 'Reader Query Count', 'unit' : null,  'value' : this.dbReaderQueryCount,  'key' : 'dbReaderQueryCount' }
+      , { 'title' : 'Writer Query Count', 'unit' : null,  'value' : this.dbWriterQueryCount,  'key' : 'dbWriterQueryCount' }
+    ];
+};
+
 urlMap = function() {
     emit(this.urlHash, {
         count         : 1
