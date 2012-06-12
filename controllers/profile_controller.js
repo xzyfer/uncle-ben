@@ -49,14 +49,14 @@ controller.new = function(req, res, next) {
  */
 controller.create = function(req, res, next) {
     var url = req.param('url');
-    var cmd = 'phantomjs ' + req.app.set('helpers') + '/netsniff.js "' + url + '"';
+    var cmd = 'phantomjs --cookies-file=/tmp/uncle-ben/cookies.txt ' + req.app.set('helpers') + '/netsniff.js "' + url + '"';
 
     var output = shell.exec(cmd, {silent:true}).output;
     var result = JSON.parse(output);
 
     var Profile = new db.profiles(result);
 
-    var Timing = new db.timings({
+    var Timing = new db.timings(_u.extend({
         url             : url
       , time            : Profile.getTotalTime()
       , firstByte       : Profile.getEntry(0).timings.wait
@@ -66,7 +66,9 @@ controller.create = function(req, res, next) {
       , onLoad          : Profile.getPage().pageTimings.onLoad
       , timeCreated     : Profile.getPage().startedDateTime
       , profile         : Profile
-    });
+    }, Profile.getResponsePerformanceData()));
+
+
 
     Timing.save(function(err) {
         if (err) return next(err)

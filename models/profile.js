@@ -55,6 +55,36 @@ Profile.methods.getTotalTime = function getTotalTime () {
     return total;
 }
 
+Profile.methods.getResponseDocumentHeaders = function getResponseDocumentHeaders(re) {
+    var re = re || new RegExp();
+    var data = {};
+
+    this.getEntry(0).response.headers.forEach(function(v, k) {
+        if(re.test(v.name)) {
+            data[v.name] = v.value;
+        }
+    });
+
+    return data;
+}
+
+Profile.methods.getResponsePerformanceData = function getResponsePerformanceData() {
+    var data = {};
+    var prefix = '(X-Perf-)';
+    var re = new RegExp("^" + prefix);
+    var headers = this.getResponseDocumentHeaders(re);
+
+    for( k in headers) {
+        var key = k;
+        key = key.replace(re, '');
+        key = key.replace(/-/g, '');
+        key = key.charAt(0).toLowerCase() + key.slice(1);
+        data[key] = headers[k];
+    }
+
+    return data;
+}
+
 Profile.pre('save', function(next) {
     if(this.hash === undefined) {
         this.hash = sha1(microtime.nowDouble().toString());

@@ -12,18 +12,25 @@ var Profile = require('../models/profile')
  */
 
 var Timing = module.exports = new Schema({
-    hash            : { type: String, index: true }
-  , urlHash         : { type: String, index: true }
-  , url             : { type: String, required: true }
-  , firstByte       : { type: Number, required: true }
-  , timeCreated     : { type: Date, required: true }
-  , time            : { type: Number, required: true }
-  , requestCount    : { type: Number, required: true }
-  , weight          : { type: Number, required: true }
-  , onContentLoad   : { type: Schema.Types.Mixed, required: true }
-  , onLoad          : { type: Schema.Types.Mixed, required: true }
-  , profile         : { type: Schema.ObjectId, ref: 'Profile' }
-  // , average         : { type: Schema.ObjectId, ref: 'Average' }
+    hash                : { type: String, index: true }
+  , urlHash             : { type: String, index: true }
+  , url                 : { type: String, required: true }
+  , firstByte           : { type: Number, required: true }
+  , timeCreated         : { type: Date, required: true }
+  , time                : { type: Number, required: true }
+  , requestCount        : { type: Number, required: true }
+  , weight              : { type: Number, required: true }
+  , onContentLoad       : { type: Schema.Types.Mixed, required: true }
+  , onLoad              : { type: Schema.Types.Mixed, required: true }
+
+  // TODO: move this into it's own model
+  , dbDomainObjectCount : { type: Number, required: false }
+  , dbQueryCount        : { type: Number, required: false }
+  , dbReaderQueryCount  : { type: Number, required: false }
+  , dbWriterQueryCount  : { type: Number, required: false }
+  , dbRecordCount       : { type: Number, required: false }
+  , profile             : { type: Schema.ObjectId, ref: 'Profile' }
+  // , average             : { type: Schema.ObjectId, ref: 'Average' }
 });
 
 urlMap = function() {
