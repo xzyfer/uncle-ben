@@ -6,6 +6,7 @@ var shell = require('shelljs')
   , _u = require('underscore')
   , microtime = require('microtime')
   , moment = require('moment')
+  , os = require('os')
   , controller = {}
   , app
   , db
@@ -113,6 +114,7 @@ controller.show = function(req, res, next) {
                       , runDate: moment(record.timeCreated)
                       , timing: record
                       , difference: difference
+                      , hostname: os.hostname()
                     });
                 }
                 if(format === 'json')

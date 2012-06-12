@@ -5,7 +5,7 @@ block head
     link(rel='stylesheet', href='/stylesheets/har-viewer.css')
 
 block header
-    p Ran on #{runDate.format('LLLL')} from uncleben1.99cluster.com (china)
+    p Ran on #{runDate.format('LLLL')} from #{hostname}
 
     p View all runs for&nbsp;
         a(href='/profile/#{urlHash}/history') #{url}
