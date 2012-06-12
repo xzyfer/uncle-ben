@@ -119,15 +119,15 @@
 }
 
 .har .timelineDomComplete {
-    background-color: red;
-    border: 1px solid red;
+    background-color: blue;
+    border: 1px solid blue;
     position: absolute;
     height: 20px;
 }
 
 .har .timelineLoad {
-    background-color: blue;
-    border: 1px solid blue;
+    background-color: red;
+    border: 1px solid red;
     position: absolute;
     height: 20px;
 }
