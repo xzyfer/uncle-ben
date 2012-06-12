@@ -59,7 +59,6 @@ controller.create = function(req, res, next) {
 
     var Timing = new db.timings(_u.extend({
         url             : url
-      , time            : Profile.getTotalTime()
       , firstByte       : Profile.getEntry(0).timings.wait
       , requestCount    : Profile.getRequestCount()
       , weight          : Profile.getTotalSize()

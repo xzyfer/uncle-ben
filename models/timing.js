@@ -15,9 +15,8 @@ var Timing = module.exports = new Schema({
     hash                : { type: String, index: true }
   , urlHash             : { type: String, index: true }
   , url                 : { type: String, required: true }
-  , firstByte           : { type: Number, required: true }
   , timeCreated         : { type: Date, required: true }
-  , time                : { type: Number, required: true }
+  , firstByte           : { type: Number, required: true }
   , requestCount        : { type: Number, required: true }
   , weight              : { type: Number, required: true }
   , onContentLoad       : { type: Schema.Types.Mixed, required: true }
@@ -55,7 +54,6 @@ urlMap = function() {
     emit(this.urlHash, {
         count               : 1
       , firstByte           : this.firstByte
-      , time                : this.time
       , onContentLoad       : this.onContentLoad
       , onLoad              : this.onLoad
       , requestCount        : this.requestCount

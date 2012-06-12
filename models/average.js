@@ -16,7 +16,6 @@ var Average = module.exports = new Schema({
     _id             : { type: String }
   , value           : {
         firstByte       : { type: Schema.Types.Mixed, required: true }
-      , time            : { type: Schema.Types.Mixed, required: true }
       , requestCount    : { type: Schema.Types.Mixed, required: true }
       , weight          : { type: Schema.Types.Mixed, required: true }
       , onContentLoad   : { type: Schema.Types.Mixed, required: true }
