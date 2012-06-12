@@ -80,10 +80,10 @@ controller.create = function(req, res, next) {
         Profile.save(function(err) {
             if (err) return next(err)
 
-            if(formate === undefined)
+            if(format === undefined)
                 res.redirect('/profile/' + Timing.hash);
             if(format === 'json')
-                res.send(JSON.stringify({ result : 'ok', hash: profile.hash }));
+                res.send({ result : 'ok', hash: profile.hash });
         });
     });
 };
@@ -121,7 +121,7 @@ controller.show = function(req, res, next) {
                     });
                 }
                 if(format === 'json')
-                    res.send(JSON.stringify(record.profile));
+                    res.send(record);
                 if(format === 'jsonp')
                     res.send(req.query.callback + '({log:' + JSON.stringify(record.profile.log) + '});');
             });
@@ -148,7 +148,7 @@ controller.history = function(req, res, next) {
                 });
             }
             if(format === 'json')
-                res.send(JSON.stringify({ url : url, history : records, average : average.value }));
+                res.send({ url : url, history : records, average : average.value });
         });
     });
 };
