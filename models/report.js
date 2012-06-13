@@ -66,16 +66,10 @@ finalizeFunction = function(key, value) {
     return value;
 };
 
-// TODO: move this into an event hook
-Report.pre('save', function(next) {
-    if(this.hash === undefined) {
-        this.hash = sha1(microtime.nowDouble().toString());
-    }
-    if(this.urlHash === undefined) {
-        this.urlHash = sha1(encodeURIComponent(this.url));
-    }
+Report.post('save', function(report) {
 
-    var that = this;
+    // stop here on update
+    if(!this._wasNew) return;
 
     this.db.db.executeDbCommand({
         mapreduce   : "reports"
@@ -87,9 +81,24 @@ Report.pre('save', function(next) {
       , finalize    : finalizeFunction.toString()
       , out         : { merge : 'averages' }
     }, function(err, db) {
-        if(err) next(new Error(err));
+        if(err) return next(err);
 
-        that.average = that.urlHash + "-" + that.type;
-        next();
+        report.average = report.urlHash + "-" + report.type;
+        report.save();
     });
+
+});
+
+// TODO: move this into an event hook
+Report.pre('save', function(next) {
+
+    this._wasNew = this.isNew;
+
+    if(this.hash === undefined) {
+        this.hash = sha1(microtime.nowDouble().toString());
+    }
+    if(this.urlHash === undefined) {
+        this.urlHash = sha1(encodeURIComponent(this.url));
+    }
+    next();
 });

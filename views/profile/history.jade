@@ -1,45 +1,29 @@
 extends ../layout
 
 block header
-    h2 There have been #{timings.length} runs
+    h2 There have been #{reports.length} runs
 
 block content
 
-    h3 Average
+    each report, i in reports
 
-    table.table.cycle.center.table-profile-history
-        thead.thead
-            tr
-                th.th DOM Ready (ms)
-                th.th Page Load (ms)
-                th.th First Byte (ms)
-                th.th Requests
-                th.th Size (bytes)
+        h3.center #{i}
 
-        tbody.tbody
-            tr
-                td.td #{average.onContentLoad}
-                td.td #{average.onLoad}
-                td.td #{average.firstByte}
-                td.td #{average.requestCount}
-                td.td #{average.weight}
-
-    table.table.cycle.center.table-profile-history
-        thead.thead
-            tr
-                th.th #
-                th.th DOM Ready (ms)
-                th.th Page Load (ms)
-                th.th First Byte (ms)
-                th.th Requests
-                th.th Size (bytes)
-
-        tbody.tbody
-            each timing, i in timings
+        table.table.cycle.center.table-profile-history
+            thead.thead
                 tr
-                    td.td #{i+1}
-                    td.td #{timing.onContentLoad}
-                    td.td #{timing.onLoad}
-                    td.td #{timing.firstByte}
-                    td.td #{timing.requestCount}
-                    td.td #{timing.weight}
+                    th.th #
+                    th.th DOM Ready (ms)
+                    th.th Page Load (ms)
+                    th.th First Byte (ms)
+                    th.th Requests
+                    th.th Size (bytes)
+
+            tbody.tbody
+                tr
+                    td.td #{i}
+                    td.td #{report.average.data.onContentLoad}
+                    td.td #{report.average.data.onLoad}
+                    td.td #{report.average.data.firstByte}
+                    td.td #{report.average.data.requestCount}
+                    td.td #{report.average.data.weight}
