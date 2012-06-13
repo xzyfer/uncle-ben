@@ -129,7 +129,7 @@ controller.show = function(req, res, next) {
  * @param {Callback} next
  *
  * @api public
- * @url /profile/:url_hash/history.:format?
+ * @url /profile/:hash/history.:format?
  */
 
 controller.history = function(req, res, next) {
@@ -138,18 +138,27 @@ controller.history = function(req, res, next) {
 
     db.profiles
         .findOne({ 'hash' : hash })
+        .populate('reports')
+        .populate('average')
         .run(function(err, record) {
             if (err) return next(err);
 
             db.reports
-                .find({ profile: record._id })
+                .find({ url: record.getUrl() })
+                .populate('profile')
                 .populate('average')
                 .run(function(err, reports) {
                     if (err) return next(err);
 
-                    var myReports = {};
+                    var data = {};
                     _u.map(reports, function(item) {
-                        myReports[item.type] = item
+                        if(data[item.type] === undefined) {
+                            data[item.type] = {};
+                            data[item.type].reports = [];
+                        }
+
+                        data[item.type].average = item.average;
+                        data[item.type].reports.push(item);
                     });
 
                     var url = record.getUrl();
@@ -158,7 +167,7 @@ controller.history = function(req, res, next) {
                         res.render('profile/history', {
                             title: 'Profile History - ' + url,
                             url: url,
-                            reports: myReports,
+                            data: data,
                         });
                     }
                     if(format === 'json')

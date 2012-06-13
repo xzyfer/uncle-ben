@@ -1,13 +1,12 @@
 extends ../layout
 
 block header
-    h2 There have been #{reports.length} runs
 
 block content
 
-    each report, i in reports
+    each reports, type in data
 
-        h3.center #{i}
+        h3.center #{type}
 
         h5.center Average
 
@@ -15,7 +14,7 @@ block content
             thead.thead
                 tr
                     th.th #
-                    each row in app.set('reports')[i].definition()
+                    each row in app.set('reports')[type].definition()
                         - if(row.unit)
                             th.th #{row.title} (#{row.unit})
                         - else
@@ -23,9 +22,9 @@ block content
 
             tbody.tbody
                 tr
-                    td.td #{i}
-                    each row in app.set('reports')[i].definition()
-                        td.td #{report.average.value[row.key]}
+                    td.td #{type}
+                    each row in app.set('reports')[type].definition()
+                        td.td #{reports.average.value[row.key]}
 
         h5.center History
 
@@ -33,14 +32,15 @@ block content
             thead.thead
                 tr
                     th.th #
-                    each row in app.set('reports')[i].definition()
+                    each row in app.set('reports')[type].definition()
                         - if(row.unit)
                             th.th #{row.title} (#{row.unit})
                         - else
                             th.th #{row.title}
 
             tbody.tbody
-                tr
-                    td.td #{i}
-                    each row in app.set('reports')[i].definition()
-                        td.td #{report.data[row.key]}
+                each report in reports.reports
+                    tr
+                        td.td #{type}
+                        each row in app.set('reports')[type].definition()
+                            td.td #{report.data[row.key]}
