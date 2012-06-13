@@ -167,25 +167,34 @@ controller.history = function(req, res, next) {
         });
 };
 
+
+/**
+ * Recent Profiles
+ *
+ * @param {Request Object} req
+ * @param {Response Object} res
+ * @param {Callback} next
+ *
+ * @api public
+ * @url /profile/recent.:format?
+ * @url /profile/recent/:limit.:format?
+ */
+
 controller.recent = function(req, res, next) {
     var format = req.param('format');
 
-    db.profiles.find()
+    db.profiles.find({}, ['hash', 'reports'])
         .sort('_id', -1)
-        .populate('_creator')
+        .populate('reports', ['hash','type','url','data'])
         .limit(req.param('limit') || 5)
-        .run(function(err, records) {
+        .run(function(err, profiles) {
             if(err) next(err);
 
-            timings = _u.map(records, function(record) {
-                return record._creator;
-            })
-
             if(format === undefined)
-                res.render('profile/recent', { title: 'Recent profiles', timings: timings });
+                res.render('profile/recent', { title: 'Recent profiles', profiles: profiles });
             if(format === 'html')
-                res.render('profile/recent', { title: 'Recent profiles', timings: timings });
+                res.render('profile/recent', { title: 'Recent profiles', profiles: profiles });
             if(format === 'json')
-                res.send(timings);
+                res.send(profiles);
         });
 };

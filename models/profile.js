@@ -13,9 +13,10 @@ var Reports = require('../models/report')
 
 var Profile = module.exports = new Schema({
     _creator    : { type: Schema.ObjectId, ref: 'Timing' }
-  , timeCreated : { type: Date }
+  , timeCreated : { type: Date, default: new Date() }
   , hash        : { type: String, index: true }
   , log         : { type: Schema.Types.Mixed }
+  , reports     : [{ type: Schema.ObjectId, ref: 'Report' }]
 });
 
 Profile.methods.getPage = function getPage () {
@@ -91,7 +92,6 @@ Profile.methods.getResponsePerformanceData = function getResponsePerformanceData
 }
 
 Profile.pre('save', function(next) {
-    this.timeCreated = new Date();
 
     if(this.hash === undefined) {
         this.hash = sha1(microtime.nowDouble().toString());

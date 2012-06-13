@@ -92,13 +92,24 @@ Report.post('save', function(report) {
 // TODO: move this into an event hook
 Report.pre('save', function(next) {
 
-    this._wasNew = this.isNew;
+    var that = this;
+    that._wasNew = that.isNew;
 
-    if(this.hash === undefined) {
-        this.hash = sha1(microtime.nowDouble().toString());
+    // stop here on update
+    if(!this._wasNew) next();
+
+    if(that.hash === undefined) {
+        that.hash = sha1(microtime.nowDouble().toString());
     }
-    if(this.urlHash === undefined) {
-        this.urlHash = sha1(encodeURIComponent(this.url));
+
+    if(that.urlHash === undefined) {
+        that.urlHash = sha1(encodeURIComponent(that.url));
     }
-    next();
+
+    that.db.model('Profile').findById(that.profile, function(err, profile) {
+        profile.reports.push(that);
+        profile.save(function(err) {
+            next();
+        });
+    });
 });
