@@ -18,6 +18,6 @@ module.exports = function(app) {
     app.get('/profile/recent.:format?', profile.recent);
 
     app.get('/profile/:hash.:format?', profile.show);
-    app.get('/profile/:url_hash/history.:format?', profile.history);
+    app.get('/profile/:hash/history.:format?', profile.history);
 
 }

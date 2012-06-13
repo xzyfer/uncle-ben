@@ -2,7 +2,7 @@
 ul.center.profile-summary-list
     each item, i in items
         - if(report.data[item.key])
-            - var fromAverage = parseInt(report.data[item.key], 10)
+            - var fromAverage = parseInt(report.data[item.key] - report.average.value[item.key], 10)
             - if (fromAverage > 0)
                 li.profile-summary-list-item.bad
                     p.summary-line

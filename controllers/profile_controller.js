@@ -120,30 +120,51 @@ controller.show = function(req, res, next) {
         });
 };
 
+
+/**
+ * Url History
+ *
+ * @param {Request Object} req
+ * @param {Response Object} res
+ * @param {Callback} next
+ *
+ * @api public
+ * @url /profile/:url_hash/history.:format?
+ */
+
 controller.history = function(req, res, next) {
-    var hash = req.param('url_hash');
+    var hash = req.param('hash');
     var format = req.param('format');
 
-    db.timings.find({ 'urlHash' : hash }, function (err, records) {
-        if (err) return next(err);
-
-        var url = records[0].url;
-
-        db.averages.findById(hash, function(err, average) {
+    db.profiles
+        .findOne({ 'hash' : hash })
+        .run(function(err, record) {
             if (err) return next(err);
 
-            if(format === undefined) {
-                res.render('profile/history', {
-                    title: 'Profile History - ' + url,
-                    url: url,
-                    timings: records,
-                    average: average.value
+            db.reports
+                .find({ profile: record._id })
+                .populate('average')
+                .run(function(err, reports) {
+                    if (err) return next(err);
+
+                    var myReports = {};
+                    _u.map(reports, function(item) {
+                        myReports[item.type] = item
+                    });
+
+                    var url = record.getUrl();
+
+                    if(format === undefined) {
+                        res.render('profile/history', {
+                            title: 'Profile History - ' + url,
+                            url: url,
+                            reports: myReports,
+                        });
+                    }
+                    if(format === 'json')
+                        res.send({ url : url, history : records, reports: reports });
                 });
-            }
-            if(format === 'json')
-                res.send({ url : url, history : records, average : average.value });
         });
-    });
 };
 
 controller.recent = function(req, res, next) {

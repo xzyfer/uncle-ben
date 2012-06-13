@@ -9,21 +9,38 @@ block content
 
         h3.center #{i}
 
+        h5.center Average
+
         table.table.cycle.center.table-profile-history
             thead.thead
                 tr
                     th.th #
-                    th.th DOM Ready (ms)
-                    th.th Page Load (ms)
-                    th.th First Byte (ms)
-                    th.th Requests
-                    th.th Size (bytes)
+                    each row in app.set('reports')[i].definition()
+                        - if(row.unit)
+                            th.th #{row.title} (#{row.unit})
+                        - else
+                            th.th #{row.title}
 
             tbody.tbody
                 tr
                     td.td #{i}
-                    td.td #{report.average.data.onContentLoad}
-                    td.td #{report.average.data.onLoad}
-                    td.td #{report.average.data.firstByte}
-                    td.td #{report.average.data.requestCount}
-                    td.td #{report.average.data.weight}
+                    each row in app.set('reports')[i].definition()
+                        td.td #{report.average.value[row.key]}
+
+        h5.center History
+
+        table.table.cycle.center.table-profile-history
+            thead.thead
+                tr
+                    th.th #
+                    each row in app.set('reports')[i].definition()
+                        - if(row.unit)
+                            th.th #{row.title} (#{row.unit})
+                        - else
+                            th.th #{row.title}
+
+            tbody.tbody
+                tr
+                    td.td #{i}
+                    each row in app.set('reports')[i].definition()
+                        td.td #{report.data[row.key]}
