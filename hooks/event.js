@@ -2,7 +2,9 @@
 // Events
 
 exports.create_profile = function (data, req) {
-    req.app.set('reports').forEach(function(report, i) {
-        report(data.profile);
-    });
+    var reports = req.app.set('reports');
+
+    for (i in reports) {
+        reports[i].create(data.profile);
+    }
 }

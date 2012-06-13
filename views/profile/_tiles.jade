@@ -1,8 +1,9 @@
 
 ul.center.profile-summary-list
     each item, i in items
-        - if(item.value)
-            - if (difference[item.key] > 0)
+        - if(report.data[item.key])
+            - var fromAverage = parseInt(report.data[item.key] - report.average.value[item.key], 10)
+            - if (fromAverage > 0)
                 li.profile-summary-list-item.bad
                     p.summary-line
                         - if(item.unit)
@@ -10,8 +11,8 @@ ul.center.profile-summary-list
                             | (#{item.unit})
                         - else
                             | #{item.title}
-                    p.summary-line.prime #{item.value}
-                    p.summary-line.average +#{difference[item.key]} on avg
+                    p.summary-line.prime #{report.data[item.key]}
+                    p.summary-line.average +#{fromAverage} on avg
             - else
                 li.profile-summary-list-item.good
                     p.summary-line
@@ -20,5 +21,5 @@ ul.center.profile-summary-list
                             | (#{item.unit})
                         - else
                             | #{item.title}
-                    p.summary-line.prime #{item.value}
-                    p.summary-line.average #{difference[item.key]} on avg
+                    p.summary-line.prime #{report.data[item.key]}
+                    p.summary-line.average #{fromAverage} on avg

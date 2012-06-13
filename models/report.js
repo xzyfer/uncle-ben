@@ -17,15 +17,19 @@ var Report = module.exports = new Schema({
   , type    : { type: String, index: true, required: true }
   , data    : { type: Schema.Types.Mixed, required: true }
   , profile : { type: Schema.ObjectId, ref: 'Profile', required: true }
+  , average : { type: Schema.Types.Mixed, ref: 'Average' }
 });
 
+Report.methods.getAverage = function getAverage (callback) {
+    this.db.model('Average').findById(this.average, callback);
+}
 
 mapFunction = function() {
     var obj = { count: 1 };
 
     for( i in this.data ) {
         if(this.data.hasOwnProperty(i)) {
-            obj[i] = this.data[i];
+            obj[i] = parseInt(this.data[i], 10);
         }
     }
 
@@ -63,7 +67,16 @@ finalizeFunction = function(key, value) {
 };
 
 // TODO: move this into an event hook
-Report.post('save', function(next) {
+Report.pre('save', function(next) {
+    if(this.hash === undefined) {
+        this.hash = sha1(microtime.nowDouble().toString());
+    }
+    if(this.urlHash === undefined) {
+        this.urlHash = sha1(encodeURIComponent(this.url));
+    }
+
+    var that = this;
+
     this.db.db.executeDbCommand({
         mapreduce   : "reports"
       , query       : { 'urlHash' : this.urlHash, 'type' : this.type }
@@ -75,16 +88,8 @@ Report.post('save', function(next) {
       , out         : { merge : 'averages' }
     }, function(err, db) {
         if(err) next(new Error(err));
-        // next();
-    });
-});
 
-Report.pre('save', function(next) {
-    if(this.hash === undefined) {
-        this.hash = sha1(microtime.nowDouble().toString());
-    }
-    if(this.urlHash === undefined) {
-        this.urlHash = sha1(encodeURIComponent(this.url));
-    }
-    next();
+        that.average = that.urlHash + "-" + that.type;
+        next();
+    });
 });

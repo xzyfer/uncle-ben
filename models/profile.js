@@ -2,7 +2,7 @@
 const Schema = require('mongoose').Schema
     , ObjectId = Schema.ObjectId;
 
-var Timing = require('../models/timing')
+var Reports = require('../models/report')
   , sha1 = require('sha1')
   , microtime = require('microtime')
 ;
@@ -13,6 +13,7 @@ var Timing = require('../models/timing')
 
 var Profile = module.exports = new Schema({
     _creator    : { type: Schema.ObjectId, ref: 'Timing' }
+  , timeCreated : { type: Date }
   , hash        : { type: String, index: true }
   , log         : { type: Schema.Types.Mixed }
 });
@@ -31,6 +32,10 @@ Profile.methods.getEntry = function getEntry (index) {
 
 Profile.methods.getRequestCount = function getRequestCount () {
     return this.getEntries().length;
+}
+
+Profile.methods.getUrl = function getUrl() {
+    return this.getPage().id;
 }
 
 Profile.methods.getTotalTime = function getTotalTime () {
@@ -86,6 +91,8 @@ Profile.methods.getResponsePerformanceData = function getResponsePerformanceData
 }
 
 Profile.pre('save', function(next) {
+    this.timeCreated = new Date();
+
     if(this.hash === undefined) {
         this.hash = sha1(microtime.nowDouble().toString());
     }

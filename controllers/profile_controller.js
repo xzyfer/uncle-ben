@@ -37,7 +37,6 @@ controller.new = function(req, res, next) {
     });
 }
 
-
 /**
  * Create Profile
  *
@@ -58,73 +57,66 @@ controller.create = function(req, res, next) {
 
     var Profile = new db.profiles(result);
 
-    var Timing = new db.timings(_u.extend({
-        url             : url
-      , firstByte       : Profile.getEntry(0).timings.wait
-      , requestCount    : Profile.getRequestCount()
-      , weight          : Profile.getTotalSize()
-      , onContentLoad   : Profile.getPage().pageTimings.onContentLoad
-      , onLoad          : Profile.getPage().pageTimings.onLoad
-      , timeCreated     : Profile.getPage().startedDateTime
-      , profile         : Profile
-    }, Profile.getResponsePerformanceData()));
+    // save the profile
+    Profile.save(function(err) {
+        if (err) return next(err);
 
+        req.app.emit('event:create_profile', { profile: Profile }, req);
 
-
-    Timing.save(function(err) {
-        if (err) return next(err)
-
-        Profile._creator = Timing._id;
-
-        // save the profile
-        Profile.save(function(err) {
-            if (err) return next(err)
-
-            if(format === undefined)
-                res.redirect('/profile/' + Timing.hash);
-            if(format === 'json')
-                res.send({ result : 'ok', hash: profile.hash });
-        });
+        if(format === undefined)
+            res.redirect('/profile/' + Profile.hash);
+        if(format === 'json')
+            res.send({ result : 'ok', hash: Profile.hash });
     });
 };
+
+
+/**
+ * Show Profile
+ *
+ * @param {Request Object} req
+ * @param {Response Object} res
+ * @param {Callback} next
+ *
+ * @api public
+ * @url /profile/:hash.:format?
+ */
 
 controller.show = function(req, res, next) {
     var hash = req.param('hash');
     var format = req.param('format');
 
-    db.timings
+    db.profiles
         .findOne({ 'hash' : hash })
-        .populate('profile')
         .run(function(err, record) {
             if (err) return next(err);
 
-            db.averages.findById(record.urlHash, function(err, average) {
-                if (err) return next(err);
+            db.reports
+                .find({ profile: record._id })
+                .populate('average')
+                .run(function(err, reports) {
+                    if (err) return next(err);
 
-                var difference = {};
-                _u.each(average.value, function(v, k) {
-                    if(_u.isNumber(v)) {
-                        difference[k] = parseInt(record[k] - v, 10);
-                    }
-                });
-
-                if(format === undefined) {
-                    res.render('profile/show', {
-                        title: record.url
-                      , url: record.url
-                      , hash: hash
-                      , urlHash: record.urlHash
-                      , runDate: moment(record.timeCreated)
-                      , timing: record
-                      , difference: difference
-                      , hostname: os.hostname()
+                    var myReports = {};
+                    _u.map(reports, function(item) {
+                        myReports[item.type] = item
                     });
-                }
-                if(format === 'json')
-                    res.send(record);
-                if(format === 'jsonp')
-                    res.send(req.query.callback + '({log:' + JSON.stringify(record.profile.log) + '});');
-            });
+
+                    if(format === undefined) {
+                        res.render('profile/show', {
+                            title: record.getUrl()
+                          , url: record.getUrl()
+                          , hash: hash
+                          , runDate: moment(record.timeCreated)
+                          , reports: myReports
+                          , hostname: os.hostname()
+                        });
+                    }
+                    if(format === 'json')
+                        res.send(record);
+                    if(format === 'jsonp')
+                        res.send(req.query.callback + '({log:' + JSON.stringify(record.log) + '});');
+                });
         });
 };
 
