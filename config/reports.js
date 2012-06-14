@@ -35,6 +35,7 @@ module.exports = function(app) {
         return {
             create: create
           , definition: definition
+          , enabled: true
         }
     })();
 
@@ -62,6 +63,7 @@ module.exports = function(app) {
         return {
             create: create
           , definition: definition
+          , enabled: false
         }
     })();
 
