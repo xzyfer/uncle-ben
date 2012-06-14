@@ -12,9 +12,9 @@ block header
 
 block content
 
-    each item, i in app.set('reports')
-        h3.center #{i}
-        != partial('_tiles', { 'items' : item.definition(), 'report' : reports[i] })
+    each report, i in reports
+        h3.center #{report.type}
+        != partial('_tiles', { report : report })
 
     #waterfall
 
