@@ -93,10 +93,10 @@ Report.post('save', function(report) {
 Report.pre('save', function(next) {
 
     var that = this;
-    that._wasNew = that.isNew;
+    that._wasNew = this.isNew;
 
     // stop here on update
-    if(!this._wasNew) next();
+    if(!that._wasNew) return next();
 
     if(that.hash === undefined) {
         that.hash = sha1(microtime.nowDouble().toString());
@@ -107,9 +107,10 @@ Report.pre('save', function(next) {
     }
 
     that.db.model('Profile').findById(that.profile, function(err, profile) {
+
         profile.reports.push(that);
         profile.save(function(err) {
-            next();
+            return next();
         });
     });
 });
