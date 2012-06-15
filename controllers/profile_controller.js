@@ -50,7 +50,7 @@ controller.new = function(req, res, next) {
 controller.create = function(req, res, next) {
     var format = req.param('format');
     var url = req.param('url');
-    var cmd = 'phantomjs --cookies-file=/tmp/uncle-ben/cookies.txt ' + req.app.set('helpers') + '/netsniff.js "' + url + '"';
+    var cmd = 'phantomjs ' + req.app.set('helpers') + '/netsniff.js "' + url + '"';
 
     var output = shell.exec(cmd, {silent:true}).output;
     var result = JSON.parse(output);
