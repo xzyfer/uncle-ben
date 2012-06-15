@@ -37,7 +37,6 @@ controller.new = function(req, res, next) {
     });
 }
 
-
 /**
  * Create Profile
  *
@@ -51,128 +50,160 @@ controller.new = function(req, res, next) {
 controller.create = function(req, res, next) {
     var format = req.param('format');
     var url = req.param('url');
-    var cmd = 'phantomjs --cookies-file=/tmp/uncle-ben/cookies.txt ' + req.app.set('helpers') + '/netsniff.js "' + url + '"';
+    var cmd = 'phantomjs ' + req.app.set('helpers') + '/netsniff.js "' + url + '"';
 
     var output = shell.exec(cmd, {silent:true}).output;
     var result = JSON.parse(output);
 
     var Profile = new db.profiles(result);
 
-    var Timing = new db.timings(_u.extend({
-        url             : url
-      , firstByte       : Profile.getEntry(0).timings.wait
-      , requestCount    : Profile.getRequestCount()
-      , weight          : Profile.getTotalSize()
-      , onContentLoad   : Profile.getPage().pageTimings.onContentLoad
-      , onLoad          : Profile.getPage().pageTimings.onLoad
-      , timeCreated     : Profile.getPage().startedDateTime
-      , profile         : Profile
-    }, Profile.getResponsePerformanceData()));
+    // save the profile
+    Profile.save(function(err) {
+        if (err) return next(err);
 
+        req.app.emit('event:create_profile', { profile: Profile }, req);
 
-
-    Timing.save(function(err) {
-        if (err) return next(err)
-
-        Profile._creator = Timing._id;
-
-        // save the profile
-        Profile.save(function(err) {
-            if (err) return next(err)
-
-            if(format === undefined)
-                res.redirect('/profile/' + Timing.hash);
-            if(format === 'json')
-                res.send({ result : 'ok', hash: profile.hash });
-        });
+        if(format === undefined)
+            res.redirect('/profile/' + Profile.hash);
+        if(format === 'json')
+            res.send({ result : 'ok', hash: Profile.hash });
     });
 };
+
+
+/**
+ * Show Profile
+ *
+ * @param {Request Object} req
+ * @param {Response Object} res
+ * @param {Callback} next
+ *
+ * @api public
+ * @url /profile/:hash.:format?
+ */
 
 controller.show = function(req, res, next) {
     var hash = req.param('hash');
     var format = req.param('format');
 
-    db.timings
+    db.profiles
         .findOne({ 'hash' : hash })
-        .populate('profile')
         .run(function(err, record) {
             if (err) return next(err);
 
-            db.averages.findById(record.urlHash, function(err, average) {
-                if (err) return next(err);
+            db.reports
+                .find({ profile: record._id })
+                .populate('average')
+                .run(function(err, reports) {
+                    if (err) return next(err);
 
-                var difference = {};
-                _u.each(average.value, function(v, k) {
-                    if(_u.isNumber(v)) {
-                        difference[k] = parseInt(record[k] - v, 10);
-                    }
-                });
-
-                if(format === undefined) {
-                    res.render('profile/show', {
-                        title: record.url
-                      , url: record.url
-                      , hash: hash
-                      , urlHash: record.urlHash
-                      , runDate: moment(record.timeCreated)
-                      , timing: record
-                      , difference: difference
-                      , hostname: os.hostname()
+                    var myReports = {};
+                    _u.map(reports, function(item) {
+                        myReports[item.type] = item
                     });
-                }
-                if(format === 'json')
-                    res.send(record);
-                if(format === 'jsonp')
-                    res.send(req.query.callback + '({log:' + JSON.stringify(record.profile.log) + '});');
-            });
+
+                    if(format === undefined) {
+                        res.render('profile/show', {
+                            title: record.getUrl()
+                          , url: record.getUrl()
+                          , hash: hash
+                          , runDate: moment(record.timeCreated)
+                          , reports: myReports
+                          , hostname: os.hostname()
+                        });
+                    }
+                    if(format === 'json')
+                        res.send(record);
+                    if(format === 'jsonp')
+                        res.send(req.query.callback + '({log:' + JSON.stringify(record.log) + '});');
+                });
         });
 };
+
+
+/**
+ * Url History
+ *
+ * @param {Request Object} req
+ * @param {Response Object} res
+ * @param {Callback} next
+ *
+ * @api public
+ * @url /profile/:hash/history.:format?
+ */
 
 controller.history = function(req, res, next) {
-    var hash = req.param('url_hash');
+    var hash = req.param('hash');
     var format = req.param('format');
 
-    db.timings.find({ 'urlHash' : hash }, function (err, records) {
-        if (err) return next(err);
-
-        var url = records[0].url;
-
-        db.averages.findById(hash, function(err, average) {
+    db.profiles
+        .findOne({ 'hash' : hash })
+        .populate('reports')
+        .populate('average')
+        .run(function(err, record) {
             if (err) return next(err);
 
-            if(format === undefined) {
-                res.render('profile/history', {
-                    title: 'Profile History - ' + url,
-                    url: url,
-                    timings: records,
-                    average: average.value
+            db.reports
+                .find({ url: record.getUrl() })
+                .populate('profile')
+                .populate('average')
+                .run(function(err, reports) {
+                    if (err) return next(err);
+
+                    var data = {};
+                    _u.map(reports, function(item) {
+                        if(data[item.type] === undefined) {
+                            data[item.type] = {};
+                            data[item.type].reports = [];
+                        }
+
+                        data[item.type].average = item.average;
+                        data[item.type].reports.push(item);
+                    });
+
+                    var url = record.getUrl();
+
+                    if(format === undefined) {
+                        res.render('profile/history', {
+                            title: 'Profile History - ' + url,
+                            url: url,
+                            data: data,
+                        });
+                    }
+                    if(format === 'json')
+                        res.send({ url : url, history : records, reports: reports });
                 });
-            }
-            if(format === 'json')
-                res.send({ url : url, history : records, average : average.value });
         });
-    });
 };
+
+
+/**
+ * Recent Profiles
+ *
+ * @param {Request Object} req
+ * @param {Response Object} res
+ * @param {Callback} next
+ *
+ * @api public
+ * @url /profile/recent.:format?
+ * @url /profile/recent/:limit.:format?
+ */
 
 controller.recent = function(req, res, next) {
     var format = req.param('format');
 
-    db.profiles.find()
+    db.profiles.find({}, ['hash', 'reports'])
         .sort('_id', -1)
-        .populate('_creator')
+        .populate('reports', ['hash','type','url','data'])
         .limit(req.param('limit') || 5)
-        .run(function(err, records) {
+        .run(function(err, profiles) {
             if(err) next(err);
 
-            timings = _u.map(records, function(record) {
-                return record._creator;
-            })
-
             if(format === undefined)
-                res.render('profile/recent', { title: 'Recent profiles', timings: timings });
+                res.render('profile/recent', { title: 'Recent profiles', profiles: profiles });
             if(format === 'html')
-                res.render('profile/recent', { title: 'Recent profiles', timings: timings });
+                res.render('profile/recent', { title: 'Recent profiles', profiles: profiles });
             if(format === 'json')
-                res.send(timings);
+                res.send(profiles);
         });
 };

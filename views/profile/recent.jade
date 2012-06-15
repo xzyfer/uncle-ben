@@ -11,10 +11,12 @@ block content
                 th.th size
 
         tbody.tbody
-            each timing in timings
-                tr
-                    td.td
-                        a(href='/profile/#{timing.hash}') #{timing.url}
-                    td.td #{timing.onLoad}
-                    td.td #{timing.requestCount}
-                    td.td #{timing.weight}
+            each profile in profiles
+                each report in profile.reports
+                    - if(report.type === 'frontend')
+                        tr
+                            td.td
+                                a(href='/profile/#{profile.hash}') #{report.url}
+                            td.td #{report.data.onLoad}
+                            td.td #{report.data.requestCount}
+                            td.td #{report.data.weight}

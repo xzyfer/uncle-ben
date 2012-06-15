@@ -40,7 +40,7 @@ module.exports = function(app){
             .set('db', {
                 'main': db
               , 'profiles': db.model('Profile')
-              , 'timings': db.model('Timing')
+              , 'reports': db.model('Report')
               , 'averages': db.model('Average')
             })
             .set('version', '0.0.1');

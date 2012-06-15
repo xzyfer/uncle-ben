@@ -10,6 +10,8 @@ const express       = require('express')
     , environments  = require('./environments')
     , errors        = require('./errors')
     , hooks         = require('./hooks')
+    , reports       = require('./reports')
+;
 
 module.exports = function () {
 
@@ -39,7 +41,11 @@ module.exports = function () {
 
     //  Load hooks
 
-    hooks(app)
+    hooks(app);
+
+    //  Load reports
+
+    reports(app);
 
     return app;
 
