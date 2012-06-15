@@ -8,20 +8,13 @@ block header
     p Ran on #{runDate.format('LLLL')} from #{hostname}
 
     p View all runs for&nbsp;
-        a(href='/profile/#{urlHash}/history') #{url}
+        a(href='/profile/#{hash}/history') #{url}
 
 block content
 
-    h3.center Frontend
-    != partial('_tiles', { 'items' : timing.getTimes(), 'difference' : difference })
-
-    h3.center Backend
-    != partial('_tiles', { 'items' : timing.getPerf(), 'difference' : difference })
-
-
-    style
-
-
+    each report, i in reports
+        h3.center #{report.type}
+        != partial('_tiles', { report : report })
 
     #waterfall
 

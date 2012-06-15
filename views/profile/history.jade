@@ -1,45 +1,46 @@
 extends ../layout
 
 block header
-    h2 There have been #{timings.length} runs
 
 block content
 
-    h3 Average
+    each reports, type in data
 
-    table.table.cycle.center.table-profile-history
-        thead.thead
-            tr
-                th.th DOM Ready (ms)
-                th.th Page Load (ms)
-                th.th First Byte (ms)
-                th.th Requests
-                th.th Size (bytes)
+        h3.center #{type}
 
-        tbody.tbody
-            tr
-                td.td #{average.onContentLoad}
-                td.td #{average.onLoad}
-                td.td #{average.firstByte}
-                td.td #{average.requestCount}
-                td.td #{average.weight}
+        h5.center Average
 
-    table.table.cycle.center.table-profile-history
-        thead.thead
-            tr
-                th.th #
-                th.th DOM Ready (ms)
-                th.th Page Load (ms)
-                th.th First Byte (ms)
-                th.th Requests
-                th.th Size (bytes)
-
-        tbody.tbody
-            each timing, i in timings
+        table.table.cycle.center.table-profile-history
+            thead.thead
                 tr
-                    td.td #{i+1}
-                    td.td #{timing.onContentLoad}
-                    td.td #{timing.onLoad}
-                    td.td #{timing.firstByte}
-                    td.td #{timing.requestCount}
-                    td.td #{timing.weight}
+                    th.th #
+                    each row in app.set('reports')[type].definition()
+                        - if(row.unit)
+                            th.th #{row.title} (#{row.unit})
+                        - else
+                            th.th #{row.title}
+
+            tbody.tbody
+                tr
+                    td.td #{type}
+                    each row in app.set('reports')[type].definition()
+                        td.td #{reports.average.value[row.key]}
+
+        h5.center History
+
+        table.table.cycle.center.table-profile-history
+            thead.thead
+                tr
+                    th.th #
+                    each row in app.set('reports')[type].definition()
+                        - if(row.unit)
+                            th.th #{row.title} (#{row.unit})
+                        - else
+                            th.th #{row.title}
+
+            tbody.tbody
+                each report in reports.reports
+                    tr
+                        td.td #{type}
+                        each row in app.set('reports')[type].definition()
+                            td.td #{report.data[row.key]}
