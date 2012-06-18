@@ -28,7 +28,7 @@ block scripts
             $.ajax({
                 dataType: 'jsonp',
                 jsonp: 'callback',
-                url: 'http://localhost:3000/profile/#{hash}.jsonp',
+                url: '/profile/#{hash}.jsonp',
                 success: function(data) {
                     $('#waterfall').HarView().data('HarView').render(data);
                 }
