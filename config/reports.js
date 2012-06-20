@@ -63,7 +63,7 @@ module.exports = function(app) {
         return {
             create: create
           , definition: definition
-          , enabled: false
+          , enabled: true
         }
     })();
 
