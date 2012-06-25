@@ -27,7 +27,7 @@ module.exports = function (_app) {
  * @url /run/:name
  */
 controller.new = function(req, res, next) {
-    var run = app.set('runs')[req.name || 'default'];
+    var run = app.set('runs')[req.param('name', 'default')];
 
     for (i in run) {
         curl.request({

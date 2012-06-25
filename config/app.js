@@ -12,6 +12,7 @@ const express       = require('express')
     , hooks         = require('./hooks')
     , reports       = require('./reports')
     , runs          = require('./runs')
+    , crons         = require('./crons')
 ;
 
 module.exports = function () {
@@ -51,6 +52,10 @@ module.exports = function () {
     //  Load runs
 
     runs(app);
+
+    //  Load cron jobs
+
+    crons(app);
 
     return app;
 
