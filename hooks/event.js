@@ -1,12 +1,13 @@
 
-// Events
+var Reporter = require('../lib/reporter')
+;
 
 exports.create_profile = function (data, req) {
-    var reports = req.app.set('reports');
+    var reporter = req.app.set('reporter')
+      , definitions = reporter.getDefinitions()
+    ;
 
-    for (i in reports) {
-        if(reports[i].enabled) {
-            reports[i].create(data.profile);
-        }
+    for (i in definitions) {
+        reporter.create(i, data.profile);
     }
 }

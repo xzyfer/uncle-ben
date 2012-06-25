@@ -14,7 +14,7 @@ block content
             thead.thead
                 tr
                     th.th #
-                    each row in app.set('reports')[type].definition()
+                    each row in app.set('reporter').getDefinition(type)
                         - if(row.unit)
                             th.th #{row.title} (#{row.unit})
                         - else
@@ -23,7 +23,7 @@ block content
             tbody.tbody
                 tr
                     td.td #{type}
-                    each row in app.set('reports')[type].definition()
+                    each row in app.set('reporter').getDefinition(type)
                         td.td #{reports.average.value[row.key]}
 
         h5.center History
@@ -32,7 +32,7 @@ block content
             thead.thead
                 tr
                     th.th #
-                    each row in app.set('reports')[type].definition()
+                    each row in app.set('reporter').getDefinition(type)
                         - if(row.unit)
                             th.th #{row.title} (#{row.unit})
                         - else
@@ -42,5 +42,5 @@ block content
                 each report in reports.reports
                     tr
                         td.td #{type}
-                        each row in app.set('reports')[type].definition()
+                        each row in app.set('reporter').getDefinition(type)
                             td.td #{report.data[row.key]}

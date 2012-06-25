@@ -1,28 +1,28 @@
-
-- if(!report.average)
-    p.center Data is still being process, please refresh the page
--else
-    ul.center.profile-summary-list
-        each item, i in app.set('reports')[report.type].definition()
-            - if(report.data[item.key])
-                - var fromAverage = parseInt(report.data[item.key] - report.average.value[item.key], 10)
-                - if (fromAverage > 0)
-                    li.profile-summary-list-item.bad
-                        p.summary-line
-                            - if(item.unit)
-                                | #{item.title}
-                                | (#{item.unit})
-                            - else
-                                | #{item.title}
-                        p.summary-line.prime #{report.data[item.key]}
-                        p.summary-line.average +#{fromAverage} on avg
-                - else
-                    li.profile-summary-list-item.good
-                        p.summary-line
-                            - if(item.unit)
-                                | #{item.title}
-                                | (#{item.unit})
-                            - else
-                                | #{item.title}
-                        p.summary-line.prime #{report.data[item.key]}
-                        p.summary-line.average #{fromAverage} on avg
+- if(report.data)
+    - if(!report.average)
+        p.center Data is still being process, please refresh the page
+    -else
+        ul.center.profile-summary-list
+            each item, i in app.set('reporter').getDefinition(report.type)
+                - if(report.data[item.key])
+                    - var fromAverage = parseInt(report.data[item.key] - report.average.value[item.key], 10)
+                    - if (fromAverage > 0)
+                        li.profile-summary-list-item.bad
+                            p.summary-line
+                                - if(item.unit)
+                                    | #{item.title}
+                                    | (#{item.unit})
+                                - else
+                                    | #{item.title}
+                            p.summary-line.prime #{report.data[item.key]}
+                            p.summary-line.average +#{fromAverage} on avg
+                    - else
+                        li.profile-summary-list-item.good
+                            p.summary-line
+                                - if(item.unit)
+                                    | #{item.title}
+                                    | (#{item.unit})
+                                - else
+                                    | #{item.title}
+                            p.summary-line.prime #{report.data[item.key]}
+                            p.summary-line.average #{fromAverage} on avg
