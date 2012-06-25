@@ -11,6 +11,7 @@ const express       = require('express')
     , errors        = require('./errors')
     , hooks         = require('./hooks')
     , reports       = require('./reports')
+    , runs          = require('./runs')
 ;
 
 module.exports = function () {
@@ -46,6 +47,10 @@ module.exports = function () {
     //  Load reports
 
     reports(app);
+
+    //  Load runs
+
+    runs(app);
 
     return app;
 
