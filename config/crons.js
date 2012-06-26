@@ -9,7 +9,7 @@ module.exports = function(app) {
     var jobs = [
         {
             name : 'fetch'
-          , pattern  : '0 */2 * * * *'
+          , pattern  : '0 */10 * * * *'
           , job : function() {
                 curl.request({
                     url : 'http://localhost:3000/run'
