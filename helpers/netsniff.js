@@ -92,14 +92,6 @@ function createHAR(address, title, timings, resources)
     };
 }
 
-// HACK: remove when upgrading to phantom js 1.6
-// source: http://stackoverflow.com/a/9838239/233633
-function evaluate(page, func) {
-    var args = [].slice.call(arguments, 2);
-    var fn = "function() { return (" + func.toString() + ").apply(this, " + JSON.stringify(args) + ");}";
-    return page.evaluate(fn);
-}
-
 // take from the node module cookie.js
 function parseCookie(str) {
     var obj = {}
@@ -182,9 +174,7 @@ if (system.args.length === 1) {
         if (res.stage === 'end') {
             page.resources[res.id].endReply = res;
 
-            // use page evaluate when upgraded to phantomjs 1.6
-            // source: https://gist.github.com/2475509/84e42ef8ce630680e373510f808f958354bf98f2
-            evaluate(page, function(cookieMsg, separator, resId) {
+            page.evaluate(function(cookieMsg, separator, resId) {
                 if(document.location.href !== 'about:blank') {
                     console.log([cookieMsg, document.cookie, resId].join(separator));
                 }
@@ -193,9 +183,7 @@ if (system.args.length === 1) {
     };
 
     page.onInitialized = function() {
-        // use page evaluate when upgraded to phantomjs 1.6
-        // source: https://gist.github.com/2475509/84e42ef8ce630680e373510f808f958354bf98f2
-        evaluate(page, function(domContentLoadedMsg) {
+        page.evaluate(function(domContentLoadedMsg) {
             document.addEventListener('DOMContentLoaded', function() {
                 console.log(domContentLoadedMsg);
             }, false);
