@@ -8,8 +8,9 @@ module.exports = function(app) {
     // TODO: make this environmental aware. Potentially load from DB in production?
     var jobs = [
         {
-            'pattern'  : '* */10 * * * *'
-          , 'function' : function() {
+            name : 'fetch'
+          , pattern  : '0 */2 * * * *'
+          , job : function() {
                 curl.request({
                     url : 'http://localhost:3000/run'
                 }, function (err, parts) {
@@ -25,7 +26,7 @@ module.exports = function(app) {
             var job = jobs[i];
 
             try {
-                new cronJob(job.pattern, job.function, null, true);
+                new cronJob(job.pattern, job.job, null, true);
             } catch(ex) {
                 throw new Error("cron pattern not valid");
             }
