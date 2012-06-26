@@ -106,5 +106,8 @@ Profile.pre('save', function(next) {
             return aT > bT ? 1 : -1;
         });
     }
+    if(this.reports === undefined) {
+        this.reports = [];
+    }
     next();
 });
