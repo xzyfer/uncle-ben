@@ -8,7 +8,7 @@ module.exports = function(app) {
     // TODO: make this environmental aware. Potentially load from DB in production?
     var jobs = [
         {
-            'pattern'  : '* */2 * * * *'
+            'pattern'  : '* */10 * * * *'
           , 'function' : function() {
                 curl.request({
                     url : 'http://localhost:3000/run'
