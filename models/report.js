@@ -11,13 +11,14 @@ var sha1 = require('sha1')
  */
 
 var Report = module.exports = new Schema({
-    hash    : { type: String, index: true }
-  , url     : { type: String, index: true }
-  , urlHash : { type: String, index: true }
-  , type    : { type: String, index: true, required: true }
-  , data    : { type: Schema.Types.Mixed, required: true }
-  , profile : { type: Schema.ObjectId, ref: 'Profile', required: true }
-  , average : { type: Schema.Types.Mixed, ref: 'Average' }
+    hash        : { type: String, index: true }
+  , url         : { type: String, index: true }
+  , urlHash     : { type: String, index: true }
+  , type        : { type: String, index: true, required: true }
+  , data        : { type: Schema.Types.Mixed, required: true }
+  , profile     : { type: Schema.ObjectId, ref: 'Profile', required: true }
+  , average     : { type: Schema.Types.Mixed, ref: 'Average' }
+  , timeCreated : { type: Date }
 });
 
 Report.methods.getAverage = function getAverage (callback) {
@@ -97,6 +98,8 @@ Report.pre('save', function(next) {
 
     // stop here on update
     if(!that._wasNew) return next();
+
+    this.timeCreated = new Date();
 
     if(that.hash === undefined) {
         that.hash = sha1(microtime.nowDouble().toString());
