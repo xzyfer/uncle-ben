@@ -19,13 +19,16 @@ module.exports = function(app) {
         }
     ];
 
-    for (i in jobs) {
-        var job = jobs[i];
+    if(app.set('cron.enabled'))
+    {
+        for (i in jobs) {
+            var job = jobs[i];
 
-        try {
-            new cronJob(job.pattern, job.function, null, true);
-        } catch(ex) {
-            throw new Error("cron pattern not valid");
+            try {
+                new cronJob(job.pattern, job.function, null, true);
+            } catch(ex) {
+                throw new Error("cron pattern not valid");
+            }
         }
     }
 
