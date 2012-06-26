@@ -12,11 +12,11 @@ module.exports = function (app) {
     , { 'title' : 'Size',       'unit' : 'bytes', 'key' : 'weight',        'value' : function(p) { return p.getTotalSize() } }
   ]);
 
-  reporter.addDefinition('backend', [
-      { 'title' : 'Query Count',        'unit' : null, 'key' : 'dbQueryCount',       'value' : function(p) { return p.getResponsePerformanceData().dbQueryCount } }
-    , { 'title' : 'Reader Query Count', 'unit' : null, 'key' : 'dbReaderQueryCount', 'value' : function(p) { return p.getResponsePerformanceData().dbReaderQueryCount } }
-    , { 'title' : 'Writer Query Count', 'unit' : null, 'key' : 'dbWriterQueryCount', 'value' : function(p) { return p.getResponsePerformanceData().dbWriterQueryCount } }
-  ]);
+  // reporter.addDefinition('backend', [
+  //     { 'title' : 'Query Count',        'unit' : null, 'key' : 'dbQueryCount',       'value' : function(p) { return p.getResponsePerformanceData().dbQueryCount } }
+  //   , { 'title' : 'Reader Query Count', 'unit' : null, 'key' : 'dbReaderQueryCount', 'value' : function(p) { return p.getResponsePerformanceData().dbReaderQueryCount } }
+  //   , { 'title' : 'Writer Query Count', 'unit' : null, 'key' : 'dbWriterQueryCount', 'value' : function(p) { return p.getResponsePerformanceData().dbWriterQueryCount } }
+  // ]);
 
   app.set('reporter', reporter);
 }
