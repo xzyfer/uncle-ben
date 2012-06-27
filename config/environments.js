@@ -16,7 +16,7 @@ module.exports = function(app) {
     app.configure('production', function (){
 
       this
-        .set('host', 'uncleben.99cluster.com')
+        .set('host', 'uncleben02.testing.99cluster.com')
         .set('port', port)
         .set('ENV','production')
         .set('cron.enabled', true)
