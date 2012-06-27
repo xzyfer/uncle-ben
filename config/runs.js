@@ -15,6 +15,12 @@ module.exports = function(app) {
       , {
             'url' : 'http://99designs.com/contests?nocache'
         }
+      , {
+            'url' : 'http://99designs.com/launch'
+        }
+      , {
+            'url' : 'http://99designs.com/launch?nocache'
+        }
     ]};
 
     app.set('runs', runs);
