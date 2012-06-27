@@ -19,7 +19,7 @@ module.exports = function(app) {
         .set('host', 'uncleben.99cluster.com')
         .set('port', port)
         .set('ENV','production')
-        .set('cron.enabled', false)
+        .set('cron.enabled', true)
     });
 
     return app
