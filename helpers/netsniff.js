@@ -202,7 +202,10 @@ if (system.args.length === 1) {
 
             eval('(' + parts[0] + ')(' + args + ')');
         } else {
-            console.log(msg);
+            try {
+                JSON.parse(msg);
+                console.log(msg);
+            } catch(err) { }
         }
     };
 
