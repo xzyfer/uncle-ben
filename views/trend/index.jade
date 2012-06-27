@@ -23,12 +23,12 @@ block scripts
                         data.push([ json[url][type][report].time, json[url][type][report].onContentLoad ]);
                     }
                     var node = document.getElementById('visualization' + k++);
-                    drawVisualization(data, node);
+                    drawVisualization(url, data, node);
                 }
             }
         }
 
-        function drawVisualization(data, node) {
+        function drawVisualization(title, data, node) {
             console.log(data);
 
             // Create and populate the data table.
@@ -37,6 +37,7 @@ block scripts
             // Create and draw the visualization.
             new google.visualization.LineChart(node).
                 draw(data, {
+                    title: title,
                     curveType: "function",
                     width: 500, height: 400,
                     vAxis: {maxValue: 10}

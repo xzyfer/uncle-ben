@@ -41,14 +41,14 @@ controller.index = function(req, res, next) {
                 record = records[i];
                 if(!record.data) continue;
 
-                if(reports[record.urlHash] === undefined) {
-                    reports[record.urlHash] = {};
+                if(reports[record.url] === undefined) {
+                    reports[record.url] = {};
                 }
-                if(reports[record.urlHash][record.type] === undefined) {
-                    reports[record.urlHash][record.type] = [];
+                if(reports[record.url][record.type] === undefined) {
+                    reports[record.url][record.type] = [];
                 }
 
-                reports[record.urlHash][record.type].push(
+                reports[record.url][record.type].push(
                     _u.extend({}, record.data, { 'time' : record.timeCreated })
                 );
             }
