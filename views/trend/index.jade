@@ -1,0 +1,46 @@
+
+block content
+    #visualization1(style="width: 500px; height: 400px;")
+    #visualization2(style="width: 500px; height: 400px;")
+    #visualization3(style="width: 500px; height: 400px;")
+    #visualization4(style="width: 500px; height: 400px;")
+
+block scripts
+    script(src="http://www.google.com/jsapi")
+    script
+        google.load('visualization', '1', {packages: ['corechart']});
+    script
+
+        function prepareVisualization() {
+            var k = 1;
+            var json = JSON.parse('!{JSON.stringify(reports)}');
+            console.log(json);
+            for( url in json ) {
+                for( type in json[url] ) {
+                    var data = [['time', 'onContentLoad']];
+
+                    for( report in json[url][type] ) {
+                        data.push([ json[url][type][report].time, json[url][type][report].onContentLoad ]);
+                    }
+                    var node = document.getElementById('visualization' + k++);
+                    drawVisualization(data, node);
+                }
+            }
+        }
+
+        function drawVisualization(data, node) {
+            console.log(data);
+
+            // Create and populate the data table.
+            var data = google.visualization.arrayToDataTable(data);
+
+            // Create and draw the visualization.
+            new google.visualization.LineChart(node).
+                draw(data, {
+                    curveType: "function",
+                    width: 500, height: 400,
+                    vAxis: {maxValue: 10}
+                });
+        }
+
+        google.setOnLoadCallback(prepareVisualization);

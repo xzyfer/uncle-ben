@@ -2,6 +2,7 @@ module.exports = function(app) {
 
     var profile = require('../controllers/profile_controller')(app);
     var run     = require('../controllers/run_controller')(app);
+    var trend   = require('../controllers/trend_controller')(app);
 
     //  Load database and pass it down to the controllers
 
@@ -21,6 +22,8 @@ module.exports = function(app) {
     app.get('/profile/:hash.:format?', profile.show);
     app.get('/profile/:hash/history.:format?', profile.history);
 
-    app.get('/run/:name?', run.new)
+    app.get('/run/:name?', run.new);
+
+    app.get('/trends.:format?', trend.index);
 
 }
