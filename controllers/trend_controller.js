@@ -31,6 +31,7 @@ controller.index = function(req, res, next) {
 
     db.reports
         .find({})
+        .where('timeCreated').lt(new Date().getTime() - (3600 * 1))
         .populate('average')
         .run(function(err, records) {
             if (err) return next(err);
