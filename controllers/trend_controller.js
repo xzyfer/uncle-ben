@@ -49,7 +49,7 @@ controller.index = function(req, res, next) {
                 }
 
                 reports[record.url][record.type].push(
-                    _u.extend({}, record.data, { 'time' : record.timeCreated })
+                    _u.extend({}, record.data, { 'time' : record.timeCreated, 'average' : record.average.value })
                 );
             }
 

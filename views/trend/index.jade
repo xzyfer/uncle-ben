@@ -15,7 +15,7 @@ block scripts
             console.log(json);
             for( url in json ) {
                 for( type in json[url] ) {
-                    var data = [['time', 'first byte', 'ready', 'loaded']];
+                    var data = [['time', 'first byte', 'ready', 'loaded', 'average', 'average', 'average']];
 
                     for( report in json[url][type] ) {
                         var record = json[url][type][report];
@@ -23,7 +23,10 @@ block scripts
                             record.time,
                             record.firstByte,
                             record.onContentLoad,
-                            record.onLoad
+                            record.onLoad,
+                            record.average.firstByte,
+                            record.average.onContentLoad,
+                            record.average.onLoad,
                         ]);
                     }
                     var node = $('<div />').addClass('graph');
