@@ -17,10 +17,16 @@ block scripts
             console.log(json);
             for( url in json ) {
                 for( type in json[url] ) {
-                    var data = [['time', 'onContentLoad']];
+                    var data = [['time', 'first byte', 'ready', 'loaded']];
 
                     for( report in json[url][type] ) {
-                        data.push([ json[url][type][report].time, json[url][type][report].onContentLoad ]);
+                        var record = json[url][type][report];
+                        data.push([
+                            record.time,
+                            record.firstByte,
+                            record.onContentLoad,
+                            record.onLoad
+                        ]);
                     }
                     var node = document.getElementById('visualization' + k++);
                     drawVisualization(url, data, node);
