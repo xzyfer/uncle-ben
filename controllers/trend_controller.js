@@ -28,10 +28,11 @@ module.exports = function (_app) {
 controller.index = function(req, res, next) {
 
     var reports = {};
+    var hours = req.param('hours') || 1;
 
     db.reports
         .find({})
-        .where('timeCreated').lt(new Date().getTime() - (3600 * 1))
+        .where('timeCreated').gt(new Date(new Date().getTime() - (3600 * hours)).toDateString())
         .populate('average')
         .run(function(err, records) {
             if (err) return next(err);
