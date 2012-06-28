@@ -55,6 +55,7 @@ controller.index = function(req, res, next) {
 
             if(req.param('format', 'html') === 'html') {
                 res.render('trend/index', {
+                    title : 'Trends',
                     reports : reports
                 });
             } else if(req.param('format', 'html') === 'json') {

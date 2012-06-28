@@ -1,9 +1,7 @@
+extends ../layout
 
 block content
-    #visualization1(style="width: 500px; height: 400px; display: inline-block")
-    #visualization2(style="width: 500px; height: 400px; display: inline-block")
-    #visualization3(style="width: 500px; height: 400px; display: inline-block")
-    #visualization4(style="width: 500px; height: 400px; display: inline-block")
+    #graphs
 
 block scripts
     script(src="http://www.google.com/jsapi")
@@ -28,8 +26,9 @@ block scripts
                             record.onLoad
                         ]);
                     }
-                    var node = document.getElementById('visualization' + k++);
-                    drawVisualization(url, data, node);
+                    var node = $('<div />').addClass('graph');
+                    $('#graphs').append(node);
+                    drawVisualization(url, data, node[0]);
                 }
             }
         }
