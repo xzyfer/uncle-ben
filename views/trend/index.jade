@@ -4,52 +4,50 @@ block content
     #graphs
 
 block scripts
-    script(src="http://www.google.com/jsapi")
-    script
-        google.load('visualization', '1', {packages: ['corechart']});
-    script
+    script(src="/javascripts/jquery.flot.min.js")
+    script(src="/javascripts/jquery.flot.threshold.min.js")
+    // script(src="/javascripts/jquery.flot.fillbetween.min.js")
 
-        function prepareVisualization() {
-            var k = 1;
-            var json = JSON.parse('!{JSON.stringify(reports)}');
-            console.log(json);
-            for( url in json ) {
-                for( type in json[url] ) {
-                    var data = [['time', 'first byte', 'ready', 'loaded', 'average', 'average', 'average']];
+    script
+        (function() {
+                var json = JSON.parse('!{JSON.stringify(reports)}');
 
-                    for( report in json[url][type] ) {
-                        var record = json[url][type][report];
-                        data.push([
-                            record.time,
-                            record.firstByte,
-                            record.onContentLoad,
-                            record.onLoad,
-                            record.average.firstByte,
-                            record.average.onContentLoad,
-                            record.average.onLoad,
-                        ]);
+                for( url in json ) {
+                    for( type in json[url] ) {
+                        var d1 = { label: 'first byte', data: [], threshold: { below : 0, color: "rgb(30, 180, 20)"}, color: "rgb(200, 20, 30)"};
+                        var d2 = { label: 'dom ready',  data: [], threshold: { below : 0, color: "rgb(30, 180, 20)"}, color: "rgb(200, 20, 30)"};
+                        var d3 = { label: 'on load',    data: [], threshold: { below : 0, color: "rgb(30, 180, 20)"}, color: "rgb(200, 20, 30)"};
+
+                        for( report in json[url][type] ) {
+                            var record = json[url][type][report];
+                            var time = new Date(record.time).getTime();
+
+                            d1.data.push([time, record.firstByte]);
+                            d2.data.push([time, record.onContentLoad]);
+                            d3.data.push([time, record.onLoad]);
+
+                            d1.threshold.below = record.average.firstByte;
+                            d2.threshold.below = record.average.onContentLoad;
+                            d3.threshold.below = record.average.onLoad;
+                        }
+
+                        var node = $('<div />').addClass('graph');
+                        $('#graphs').append(node);
+                        $.plot(node, [
+                                d1,
+                                d2,
+                                d3
+                            ], {
+                            series: {
+                                lines: { show: true },
+                                points: { show: true }
+                            },
+                            xaxis: {
+                                mode: "time",
+                                timeformat: "%y/%m/%d"
+                            }
+                        });
                     }
-                    var node = $('<div />').addClass('graph');
-                    $('#graphs').append(node);
-                    drawVisualization(url, data, node[0]);
                 }
-            }
-        }
 
-        function drawVisualization(title, data, node) {
-            console.log(data);
-
-            // Create and populate the data table.
-            var data = google.visualization.arrayToDataTable(data);
-
-            // Create and draw the visualization.
-            new google.visualization.LineChart(node).
-                draw(data, {
-                    title: title,
-                    curveType: "function",
-                    width: 500, height: 400,
-                    vAxis: {maxValue: 10}
-                });
-        }
-
-        google.setOnLoadCallback(prepareVisualization);
+        })();
