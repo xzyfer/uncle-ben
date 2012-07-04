@@ -29,10 +29,12 @@ controller.index = function(req, res, next) {
 
     var reports = {};
     var hours = req.param('hours') || 1;
+    var metrics = (req.param('metrics') || 'domready').split(',');
 
     db.reports
         .find({})
-        .where('timeCreated').gt(new Date(new Date().getTime() - (3600 * hours)).toDateString())
+        .where('timeCreated').gt(new Date(Date.now() - (3600 * 1000 * hours)))
+        .sort('timeCreated', 'descending')
         .populate('average')
         .run(function(err, records) {
             if (err) return next(err);
@@ -58,7 +60,8 @@ controller.index = function(req, res, next) {
             if(req.param('format', 'html') === 'html') {
                 res.render('trend/index', {
                     title : 'Trends',
-                    reports : reports
+                    reports : reports,
+                    metrics : metrics
                 });
             } else if(req.param('format', 'html') === 'json') {
                 res.send({ reports : reports })

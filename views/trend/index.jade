@@ -11,33 +11,49 @@ block scripts
     script
         (function() {
                 var json = JSON.parse('!{JSON.stringify(reports)}');
+                var metrics = JSON.parse('!{JSON.stringify(metrics)}');
 
+                function hasMetric(key) {
+                    return metrics.indexOf(key) >= 0;
+                }
+
+                console.log(metrics);
                 for( url in json ) {
                     for( type in json[url] ) {
-                        var d1 = { label: 'first byte', data: [], threshold: { below : 0, color: "rgb(30, 180, 20)"}, color: "rgb(200, 20, 30)"};
-                        var d2 = { label: 'dom ready',  data: [], threshold: { below : 0, color: "rgb(30, 180, 20)"}, color: "rgb(200, 20, 30)"};
-                        var d3 = { label: 'on load',    data: [], threshold: { below : 0, color: "rgb(30, 180, 20)"}, color: "rgb(200, 20, 30)"};
+                        var d1 = [], d2 = [], d3 = [];
+                        if (hasMetric('firstbyte')) {
+                            d1 = { label: 'first byte', data: [], threshold: { below : 0, color: "rgb(30, 180, 20)"}, color: "rgb(200, 20, 30)"};
+                        }
+                        if (hasMetric('domready')) {
+                            d2 = { label: 'dom ready',  data: [], threshold: { below : 0, color: "rgb(30, 180, 20)"}, color: "rgb(200, 20, 30)"};
+                        }
+                        if (hasMetric('onload')) {
+                            d3 = { label: 'on load',    data: [], threshold: { below : 0, color: "rgb(30, 180, 20)"}, color: "rgb(200, 20, 30)"};
+                        }
 
                         for( report in json[url][type] ) {
                             var record = json[url][type][report];
                             var time = new Date(record.time).getTime();
 
-                            d1.data.push([time, record.firstByte]);
-                            d2.data.push([time, record.onContentLoad]);
-                            d3.data.push([time, record.onLoad]);
-
-                            d1.threshold.below = record.average.firstByte;
-                            d2.threshold.below = record.average.onContentLoad;
-                            d3.threshold.below = record.average.onLoad;
+                            if (hasMetric('firstbyte')) {
+                                d1.data.push([time, record.firstByte]);
+                                d1.threshold.below = record.average.firstByte;
+                            }
+                            if (hasMetric('domready')) {
+                                d2.data.push([time, record.onContentLoad]);
+                                d2.threshold.below = record.average.onContentLoad;
+                            }
+                            if (hasMetric('onload')) {
+                                d3.data.push([time, record.onLoad]);
+                                d3.threshold.below = record.average.onLoad;
+                            }
                         }
 
+                        var data = [d1, d2, d3].filter(function(el) { return el.data !== undefined && el.data.length; });
                         var node = $('<div />').addClass('graph');
+
                         $('#graphs').append(node);
-                        $.plot(node, [
-                                d1,
-                                d2,
-                                d3
-                            ], {
+                        $.plot(node, data, {
                             series: {
                                 lines: { show: true },
                                 points: { show: true }
