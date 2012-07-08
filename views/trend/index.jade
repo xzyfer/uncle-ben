@@ -4,66 +4,70 @@ block content
     #graphs
 
 block scripts
-    script(src="/javascripts/jquery.flot.min.js")
-    script(src="/javascripts/jquery.flot.threshold.min.js")
+    // script(src="/javascripts/jquery.flot.min.js")
+    // script(src="/javascripts/jquery.flot.threshold.min.js")
     // script(src="/javascripts/jquery.flot.fillbetween.min.js")
+    script(src='//www.google.com/jsapi')
 
     script
-        (function() {
-                var json = JSON.parse('!{JSON.stringify(reports)}');
-                var metrics = JSON.parse('!{JSON.stringify(metrics)}');
+        var json = JSON.parse('!{JSON.stringify(reports)}');
 
-                function hasMetric(key) {
-                    return metrics.indexOf(key) >= 0;
-                }
+        google.load("visualization", "1", {packages:["corechart"]});
+        google.setOnLoadCallback(drawChart);
 
-                console.log(metrics);
+        function drawChart() {
                 for( url in json ) {
-                    for( type in json[url] ) {
-                        var d1 = [], d2 = [], d3 = [];
-                        if (hasMetric('firstbyte')) {
-                            d1 = { label: 'first byte', data: [], threshold: { below : 0, color: "rgb(30, 180, 20)"}, color: "rgb(200, 20, 30)"};
-                        }
-                        if (hasMetric('domready')) {
-                            d2 = { label: 'dom ready',  data: [], threshold: { below : 0, color: "rgb(30, 180, 20)"}, color: "rgb(200, 20, 30)"};
-                        }
-                        if (hasMetric('onload')) {
-                            d3 = { label: 'on load',    data: [], threshold: { below : 0, color: "rgb(30, 180, 20)"}, color: "rgb(200, 20, 30)"};
-                        }
+                    var dataTable = new google.visualization.DataTable();
+                    dataTable.addColumn('datetime', 'Time');
+                    dataTable.addColumn('number', 'onLoad');
+                    dataTable.addColumn('number', 'warning');
+                    dataTable.addColumn('number', 'critical');
 
-                        for( report in json[url][type] ) {
-                            var record = json[url][type][report];
-                            var time = new Date(record.time).getTime();
+                    var type = 'frontend';
+                    var data = [];
+                    var threshold = json[url][type][0].average.onLoad;
 
-                            if (hasMetric('firstbyte')) {
-                                d1.data.push([time, record.firstByte]);
-                                d1.threshold.below = record.average.firstByte;
-                            }
-                            if (hasMetric('domready')) {
-                                d2.data.push([time, record.onContentLoad]);
-                                d2.threshold.below = record.average.onContentLoad;
-                            }
-                            if (hasMetric('onload')) {
-                                d3.data.push([time, record.onLoad]);
-                                d3.threshold.below = record.average.onLoad;
-                            }
+                    for( report in json[url][type] ) {
+                        if( report > 0) {
+                            var prevRecord = json[url][type][report - 1];
                         }
+                        var record = json[url][type][report];
+                        var time = new Date(record.time);
+                        var value = record.onLoad;
 
-                        var data = [d1, d2, d3].filter(function(el) { return el.data !== undefined && el.data.length; });
-                        var node = $('<div />').addClass('graph');
-
-                        $('#graphs').append(node);
-                        $.plot(node, data, {
-                            series: {
-                                lines: { show: true },
-                                points: { show: true }
-                            },
-                            xaxis: {
-                                mode: "time",
-                                timeformat: "%y/%m/%d"
+                        if(value <= threshold) {
+                            if(prevRecord && prevRecord.onLoad > threshold) {
+                                // figure out transition points here
                             }
-                        });
+                            data.push([time, value, null, null]);
+                        } else if(value > threshold) {
+                            if(prevRecord && value <= threshold) {
+                                // figure out transition points here
+                            }
+
+                            data.push([time, value, value, null]);
+                        }
                     }
+                    dataTable.addRows(data);
+
+                    var node = $('<div />').addClass('graph');
+                    $('#graphs').append(node);
+
+                    var ac = new google.visualization.AreaChart(node[0]);
+                    ac.draw(dataTable, {
+                        title : url + ' (onLoad)',
+                        isStacked: false,
+                        width: 600,
+                        height: 400,
+                        series: [
+                          {color: 'green', visibleInLegend: true},
+                          {color: 'yellow', visibleInLegend: false},
+                          {color: 'red', visibleInLegend: false}
+                        ],
+                        vAxis: {title: "Time (ms)", viewWindow: {min: 0}},
+                        hAxis: {title: "Date"}
+                    });
+
                 }
 
-        })();
+        };
