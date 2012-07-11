@@ -37,12 +37,21 @@ block scripts
 
                         if(value <= threshold) {
                             if(prevRecord && prevRecord.onLoad > threshold) {
-                                // figure out transition points here
+                                var m = (prevRecord.onLoad - record.onLoad) / (new Date(prevRecord.time).getTime() - new Date(record.time).getTime());
+                                var c = record.onLoad - (m * new Date(record.time).getTime());
+                                var x = (threshold - c) / m;
+
+                                data.push([new Date(x), threshold, threshold, null]);
                             }
+
                             data.push([time, value, null, null]);
                         } else if(value > threshold) {
                             if(prevRecord && value <= threshold) {
-                                // figure out transition points here
+                                var m = (prevRecord.onLoad - record.onLoad) / (new Date(prevRecord.time).getTime() - new Date(record.time).getTime());
+                                var c = record.onLoad - (m * new Date(record.time).getTime());
+                                var x = (threshold - c) / m;
+
+                                data.push([new Date(x), threshold, null, null]);
                             }
 
                             data.push([time, value, value, null]);
