@@ -31,7 +31,7 @@ block content
         table.table.cycle.center.table-profile-history
             thead.thead
                 tr
-                    th.th #
+                    th.th Date
                     each row in app.set('reporter').getDefinition(type)
                         - if(row.unit)
                             th.th #{row.title} (#{row.unit})
@@ -41,6 +41,6 @@ block content
             tbody.tbody
                 each report in reports.reports
                     tr
-                        td.td #{type}
+                        td.td #{new Date(report.timeCreated)}
                         each row in app.set('reporter').getDefinition(type)
                             td.td #{report.data[row.key]}
