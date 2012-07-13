@@ -28,12 +28,15 @@ module.exports = function (_app) {
 controller.index = function(req, res, next) {
 
     var reports = {};
-    var hours = req.param('hours') || 1;
+    var hours = parseInt(req.param('hours') || 1, 10);
+    var offset = parseInt(req.param('offset') || 0, 10);
     var metrics = (req.param('metrics') || 'domready').split(',');
 
     db.reports
         .find({})
-        .where('timeCreated').gt(new Date(Date.now() - (3600 * 1000 * hours)))
+        .where('timeCreated')
+            .gt(new Date(Date.now() - (3600 * 1000 * (hours + offset))))
+            .lt(new Date(Date.now() - (3600 * 1000 * offset)))
         .sort('timeCreated', 'ascending')
         .populate('average')
         .run(function(err, records) {
