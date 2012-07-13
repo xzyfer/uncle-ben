@@ -136,6 +136,7 @@ controller.history = function(req, res, next) {
     var hash = req.param('hash');
     var format = req.param('format');
     var limit = req.param('limit') || 100;
+    var offset = req.param('offset') || 0;
 
     db.profiles
         .findOne({ 'hash' : hash })
@@ -149,7 +150,7 @@ controller.history = function(req, res, next) {
                 .populate('profile')
                 .populate('average')
                 .sort('timeCreated', 'descending')
-                .limit(limit)
+                .limit(limit).skip(offset)
                 .run(function(err, reports) {
                     if (err) return next(err);
 
