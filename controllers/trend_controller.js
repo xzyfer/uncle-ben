@@ -43,7 +43,7 @@ controller.index = function(req, res, next) {
             if (err) return next(err);
 
             var record = {};
-
+console.log(records.length);
             for ( var i in records ) {
                 record = records[i];
                 if(!record.data) continue;
@@ -55,11 +55,9 @@ controller.index = function(req, res, next) {
                     reports[record.url][record.type] = [];
                 }
 
-                if(record.average !== undefined) {
-                    reports[record.url][record.type].push(
-                        _u.extend({}, record.data, { 'time' : record.timeCreated, 'average' : record.average.value })
-                    );
-                }
+                reports[record.url][record.type].push(
+                    _u.extend({}, record.data, { 'time' : record.timeCreated, 'average' : record.average === undefined ? 0 : record.average.value })
+                );
             }
 
             if(req.param('format', 'html') === 'html') {
