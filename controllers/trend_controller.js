@@ -10,10 +10,10 @@ var _u = require('underscore')
 // Constructor
 
 module.exports = function (_app) {
-    app = _app
-    db  = app.set('db')
-    return controller
-}
+    app = _app;
+    db  = app.set('db');
+    return controller;
+};
 
 /**
  * Trends
@@ -38,12 +38,12 @@ controller.index = function(req, res, next) {
             .gt(new Date(Date.now() - (3600 * 1000 * (hours + offset))))
             .lt(new Date(Date.now() - (3600 * 1000 * offset)))
         .sort('timeCreated', 'ascending')
+        .populate('profile')
         .populate('average')
         .run(function(err, records) {
             if (err) return next(err);
 
             var record = {};
-console.log(records.length);
             for ( var i in records ) {
                 record = records[i];
                 if(!record.data) continue;
@@ -56,7 +56,12 @@ console.log(records.length);
                 }
 
                 reports[record.url][record.type].push(
-                    _u.extend({}, record.data, { 'time' : record.timeCreated, 'average' : record.average === undefined ? 0 : record.average.value })
+                    _u.extend({}, record.data, {
+                        'time' : record.timeCreated
+                      , 'average' : record.average === undefined ? 0 : record.average.value
+                      , 'hash' : record.profile.hash
+                      , 'url' : '/profile/' + record.profile.hash
+                    })
                 );
             }
 
@@ -67,7 +72,7 @@ console.log(records.length);
                     metrics : metrics
                 });
             } else if(req.param('format', 'html') === 'json') {
-                res.send({ reports : reports })
+                res.send({ reports : reports });
             }
         });
-}
+};

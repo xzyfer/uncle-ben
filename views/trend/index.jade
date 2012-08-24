@@ -41,21 +41,22 @@ block scripts
                                 var c = record.onLoad - (m * new Date(record.time).getTime());
                                 var x = (threshold - c) / m;
 
-                                data.push([new Date(x), threshold, threshold, null]);
+                                dataTable.addRow([new Date(x), threshold, threshold, null]);
                             }
 
-                            data.push([time, value, null, null]);
+                            dataTable.addRow([time, value, null, null]);
                         } else if(value > threshold) {
                             if(prevRecord && value <= threshold) {
                                 var m = (prevRecord.onLoad - record.onLoad) / (new Date(prevRecord.time).getTime() - new Date(record.time).getTime());
                                 var c = record.onLoad - (m * new Date(record.time).getTime());
                                 var x = (threshold - c) / m;
 
-                                data.push([new Date(x), threshold, null, null]);
+                                dataTable.addRow([new Date(x), threshold, null, null]);
                             }
 
-                            data.push([time, value, value, null]);
+                            dataTable.addRow([time, value, value, null]);
                         }
+                        dataTable.setRowProperty(dataTable.D.length - 1, 'url', record.url);
                     }
                     dataTable.addRows(data);
 
@@ -76,6 +77,12 @@ block scripts
                         vAxis: {title: "Time (ms)", viewWindow: {min: 0}},
                         hAxis: {title: "Date"}
                     });
+
+                    google.visualization.events.addListener(ac, 'select', selectHandler);
+
+                    function selectHandler(e) {
+                      window.location = dataTable.getRowProperty(ac.getSelection()[0].row, 'url');
+                    }
 
                 }
 
