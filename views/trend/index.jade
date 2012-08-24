@@ -4,9 +4,6 @@ block content
     #graphs
 
 block scripts
-    // script(src="/javascripts/jquery.flot.min.js")
-    // script(src="/javascripts/jquery.flot.threshold.min.js")
-    // script(src="/javascripts/jquery.flot.fillbetween.min.js")
     script(src='//www.google.com/jsapi')
 
     script
@@ -15,75 +12,80 @@ block scripts
         google.load("visualization", "1", {packages:["corechart"]});
         google.setOnLoadCallback(drawChart);
 
-        function drawChart() {
-                for( url in json ) {
-                    var dataTable = new google.visualization.DataTable();
-                    dataTable.addColumn('datetime', 'Time');
-                    dataTable.addColumn('number', 'onLoad');
-                    dataTable.addColumn('number', 'warning');
-                    dataTable.addColumn('number', 'critical');
 
-                    var type = 'frontend';
-                    var data = [];
-                    var threshold = json[url][type][0].average.onLoad;
+        function MyChart(node) {
+            var chart = new google.visualization.AreaChart(node);
 
-                    for( report in json[url][type] ) {
-                        if( report > 0) {
-                            var prevRecord = json[url][type][report - 1];
-                        }
-                        var record = json[url][type][report];
-                        var time = new Date(record.time);
-                        var value = record.onLoad;
+            var dataTable = new google.visualization.DataTable();
+            dataTable.addColumn('datetime', 'Time');
+            dataTable.addColumn('number', 'onLoad');
+            dataTable.addColumn('number', 'warning');
+            dataTable.addColumn('number', 'critical');
 
-                        if(value <= threshold) {
-                            if(prevRecord && prevRecord.onLoad > threshold) {
-                                var m = (prevRecord.onLoad - record.onLoad) / (new Date(prevRecord.time).getTime() - new Date(record.time).getTime());
-                                var c = record.onLoad - (m * new Date(record.time).getTime());
-                                var x = (threshold - c) / m;
+            var type = 'frontend';
+            var data = [];
+            var threshold = json[url][type][0].average.onLoad;
 
-                                dataTable.addRow([new Date(x), threshold, threshold, null]);
-                            }
-
-                            dataTable.addRow([time, value, null, null]);
-                        } else if(value > threshold) {
-                            if(prevRecord && value <= threshold) {
-                                var m = (prevRecord.onLoad - record.onLoad) / (new Date(prevRecord.time).getTime() - new Date(record.time).getTime());
-                                var c = record.onLoad - (m * new Date(record.time).getTime());
-                                var x = (threshold - c) / m;
-
-                                dataTable.addRow([new Date(x), threshold, null, null]);
-                            }
-
-                            dataTable.addRow([time, value, value, null]);
-                        }
-                        dataTable.setRowProperty(dataTable.D.length - 1, 'url', record.url);
-                    }
-                    dataTable.addRows(data);
-
-                    var node = $('<div />').addClass('graph');
-                    $('#graphs').append(node);
-
-                    var ac = new google.visualization.AreaChart(node[0]);
-                    ac.draw(dataTable, {
-                        title : url + ' (onLoad)',
-                        isStacked: false,
-                        width: 600,
-                        height: 400,
-                        series: [
-                          {color: 'green', visibleInLegend: true},
-                          {color: 'yellow', visibleInLegend: false},
-                          {color: 'red', visibleInLegend: false}
-                        ],
-                        vAxis: {title: "Time (ms)", viewWindow: {min: 0}},
-                        hAxis: {title: "Date"}
-                    });
-
-                    google.visualization.events.addListener(ac, 'select', selectHandler);
-
-                    function selectHandler(e) {
-                      window.location = dataTable.getRowProperty(ac.getSelection()[0].row, 'url');
-                    }
-
+            for( report in json[url][type] ) {
+                if( report > 0) {
+                    var prevRecord = json[url][type][report - 1];
                 }
+                var record = json[url][type][report];
+                var time = new Date(record.time);
+                var value = record.onLoad;
 
+                if(value <= threshold) {
+                    if(prevRecord && prevRecord.onLoad > threshold) {
+                        var m = (prevRecord.onLoad - record.onLoad) / (new Date(prevRecord.time).getTime() - new Date(record.time).getTime());
+                        var c = record.onLoad - (m * new Date(record.time).getTime());
+                        var x = (threshold - c) / m;
+
+                        dataTable.addRow([new Date(x), threshold, threshold, null]);
+                    }
+
+                    dataTable.addRow([time, value, null, null]);
+                } else if(value > threshold) {
+                    if(prevRecord && value <= threshold) {
+                        var m = (prevRecord.onLoad - record.onLoad) / (new Date(prevRecord.time).getTime() - new Date(record.time).getTime());
+                        var c = record.onLoad - (m * new Date(record.time).getTime());
+                        var x = (threshold - c) / m;
+
+                        dataTable.addRow([new Date(x), threshold, null, null]);
+                    }
+
+                    dataTable.addRow([time, value, value, null]);
+                }
+                dataTable.setRowProperty(dataTable.D.length - 1, 'url', record.url);
+            }
+            dataTable.addRows(data);
+
+            chart.draw(dataTable, {
+                title : url + ' (onLoad)',
+                isStacked: false,
+                width: 600,
+                height: 400,
+                series: [
+                  {color: 'green', visibleInLegend: true},
+                  {color: 'yellow', visibleInLegend: false},
+                  {color: 'red', visibleInLegend: false}
+                ],
+                vAxis: {title: "Time (ms)", viewWindow: {min: 0}},
+                hAxis: {title: "Date"}
+            });
+
+            google.visualization.events.addListener(chart, 'select', selectHandler);
+            function selectHandler(a,b,c) {
+                window.location = dataTable.getRowProperty(chart.getSelection()[0].row, 'url');
+            };
+        }
+
+        function drawChart() {
+            for( url in json ) {
+
+                var node = $('<div />').addClass('graph');
+                $('#graphs').append(node);
+
+                new MyChart(node[0]);
+
+            }
         };
