@@ -10,7 +10,7 @@ module.exports = function(app) {
         .set('host', 'localhost')
         .set('port', port)
         .set('ENV','local')
-        .set('cron.enabled',false)
+        .set('cron.enabled', true)
         .set('phantomjs.path', 'phantomjs')
     });
 
