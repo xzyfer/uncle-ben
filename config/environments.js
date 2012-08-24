@@ -10,7 +10,7 @@ module.exports = function(app) {
         .set('host', 'localhost')
         .set('port', port)
         .set('ENV','local')
-        .set('cron.enabled', false)
+        .set('cron.enabled',false)
         .set('phantomjs.path', 'phantomjs')
     });
 
@@ -20,7 +20,7 @@ module.exports = function(app) {
         .set('host', 'uncleben02.testing.99cluster.com')
         .set('port', port)
         .set('ENV','production')
-        .set('cron.enabled', true)
+        .set('cron.enabled', false)
         .set('phantomjs.path', '/usr/local/bin/phantomjs')
     });
 
