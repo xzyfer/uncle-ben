@@ -10,10 +10,10 @@ var curl = require('curlrequest')
 // Constructor
 
 module.exports = function (_app) {
-    app = _app
-    db  = app.set('db')
-    return controller
-}
+    app = _app;
+    db  = app.set('db');
+    return controller;
+};
 
 /**
  * New Profile
@@ -27,7 +27,7 @@ module.exports = function (_app) {
  * @url /run/:name
  */
 controller.new = function(req, res, next) {
-    var run = app.set('runs')[req.param('name', 'default')];
+    var run = app.set('runs')[app.set('region')][req.param('name', 'default')];
 
     for (i in run) {
         curl.request({
@@ -39,4 +39,4 @@ controller.new = function(req, res, next) {
     }
 
     res.send({ result : 'ok' });
-}
+};

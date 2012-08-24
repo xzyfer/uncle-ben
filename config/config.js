@@ -8,8 +8,9 @@ module.exports = function(app){
     //  Setup DB Connection
 
     var dblink = process.env.MONGOHQ_URL || 'mongodb://localhost/test';
+    var region = process.env.REGION || 'US';
 
-    const db  = mongoose.createConnection(dblink);
+    const db = mongoose.createConnection(dblink);
 
     //  Configure expressjs
 
@@ -17,7 +18,7 @@ module.exports = function(app){
         this
             .use(express.logger('\033[90m:method\033[0m \033[36m:url\033[0m \033[90m:response-time ms\033[0m'))
             .use(express.bodyParser())
-            .use(express.methodOverride())
+            .use(express.methodOverride());
     });
 
     //  Add template engine
@@ -30,7 +31,7 @@ module.exports = function(app){
             .set('view options', {
                 layout: false
             })
-            .use(express.static(__dirname + '/../public'))
+            .use(express.static(__dirname + '/../public'));
     });
 
     //  Save reference to database connection
@@ -46,6 +47,12 @@ module.exports = function(app){
             .set('version', '0.0.1');
     });
 
+    //  Save reference to current region
+
+    app.configure(function () {
+        this.set('region', region);
+    });
+
     //  Set environment aware error handlers
 
     app.configure('development', function() {
@@ -57,4 +64,4 @@ module.exports = function(app){
     });
 
     return app;
-}
+};
