@@ -8,7 +8,6 @@ module.exports = function(app){
     //  Setup DB Connection
 
     var dblink = process.env.MONGOHQ_URL || 'mongodb://localhost/test';
-    console.log(dblink);
 
     const db  = mongoose.createConnection(dblink);
 
