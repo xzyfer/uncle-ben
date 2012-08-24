@@ -15,9 +15,10 @@ var port = process.env.PORT || 3000;
 
 app.listen(port);
 
-console.log('\x1b[36mUncle Ben\x1b[90m v%s\x1b[0m running as \x1b[1m%s\x1b[0m on http://%s:%d',
+console.log('\x1b[36mUncle Ben\x1b[90m v%s\x1b[0m running as \x1b[1m%s\x1b[0m on http://%s:%d in %s region',
   app.set('version'),
   app.set('env'),
   app.set('host'),
-  app.address().port
+  app.address().port,
+  process.env.REGION || 'us'
 );
