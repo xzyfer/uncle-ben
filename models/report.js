@@ -76,7 +76,7 @@ Report.post('save', function(report) {
 
     this.db.db.executeDbCommand({
         mapreduce   : "reports"
-      , query       : { 'urlHash' : this.urlHash, 'type' : this.type }
+      , query       : { 'urlHash' : this.urlHash, 'type' : this.type, 'region' : this.region }
       , sort        : { '_id' : -1 }
       , limit       : 10
       , map         : mapFunction.toString()
