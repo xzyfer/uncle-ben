@@ -14,6 +14,7 @@ var Report = module.exports = new Schema({
     hash        : { type: String, index: true }
   , url         : { type: String, index: true }
   , urlHash     : { type: String, index: true }
+  , region      : { type: String, index: true }
   , type        : { type: String, index: true, required: true }
   , data        : { type: Schema.Types.Mixed, required: true }
   , profile     : { type: Schema.ObjectId, ref: 'Profile', required: true }
@@ -26,7 +27,7 @@ Report.methods.getAverage = function getAverage (callback) {
 }
 
 mapFunction = function() {
-    var obj = { count: 1 };
+    var obj = { count: 1, region: this.region };
 
     for( i in this.data ) {
         if(this.data.hasOwnProperty(i)) {
@@ -42,10 +43,11 @@ reduceFunction = function(key, value) {
 
     value.forEach(function(row) {
         result.count += row.count;
+        result.region = result.region || row.region;
 
         for(i in row) {
             if(row.hasOwnProperty(i)) {
-                if(i !== 'count') {
+                if(i !== 'count' && i !== 'region') {
                     result[i] = (result[i] || 0) + row[i];
                 }
             }
@@ -58,7 +60,7 @@ reduceFunction = function(key, value) {
 finalizeFunction = function(key, value) {
     for(i in value) {
         if(value.hasOwnProperty(i)) {
-            if(i !== 'count' && value[i] > 0) {
+            if(i !== 'count' && i !== 'region' && value[i] > 0) {
                 value[i] = value[i] / value.count;
             }
         }

@@ -8,6 +8,7 @@ const Schema = require('mongoose').Schema
  */
 
 var Average = module.exports = new Schema({
-    _id   : { type: String }
-  , value  : { type: Schema.Types.Mixed, required: true }
+    _id     : { type: String }
+  , region  : { type: String, index: true }
+  , value   : { type: Schema.Types.Mixed, required: true }
 });

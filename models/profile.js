@@ -15,6 +15,7 @@ var Profile = module.exports = new Schema({
     _creator    : { type: Schema.ObjectId, ref: 'Timing' }
   , timeCreated : { type: Date, default: new Date() }
   , hash        : { type: String, index: true }
+  , region      : { type: String, index: true }
   , log         : { type: Schema.Types.Mixed }
   , reports     : [{ type: Schema.ObjectId, ref: 'Report' }]
 });

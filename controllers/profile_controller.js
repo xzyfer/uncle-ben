@@ -56,6 +56,7 @@ controller.create = function(req, res, next) {
     var result = JSON.parse(output);
 
     var Profile = new db.profiles(result);
+    Profile.region = app.set('region');
 
     // save the profile
     Profile.save(function(err) {
