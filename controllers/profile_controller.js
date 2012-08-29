@@ -49,7 +49,7 @@ controller.new = function(req, res, next) {
  */
 controller.create = function(req, res, next) {
     var format = req.param('format');
-    var url = req.param('url');
+    var url = req.param('url').trim();
     var cmd = [req.app.set('phantomjs.path'), req.app.set('helpers') + '/netsniff.js' , '"' + url + '"'].join(' ');
 
     var output = shell.exec(cmd, {silent:true}).output;
