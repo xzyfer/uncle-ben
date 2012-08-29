@@ -197,7 +197,8 @@ controller.history = function(req, res, next) {
 controller.recent = function(req, res, next) {
     var format = req.param('format');
 
-    db.profiles.find({}, ['hash', 'reports'])
+    db.profiles.find({})
+        .select('hash reports')
         .sort('field -_id')
         .populate('reports', 'hash type url data')
         .limit(req.param('limit') || 5)
