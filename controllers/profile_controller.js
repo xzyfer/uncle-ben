@@ -199,7 +199,7 @@ controller.recent = function(req, res, next) {
 
     db.profiles.find({}, ['hash', 'reports'])
         .sort('field -_id')
-        .populate('reports', ['hash','type','url','data'])
+        .populate('reports', 'hash type url data')
         .limit(req.param('limit') || 5)
         .exec(function(err, profiles) {
             if(err) next(err);
