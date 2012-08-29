@@ -37,10 +37,10 @@ controller.index = function(req, res, next) {
         .where('timeCreated')
             .gt(new Date(Date.now() - (3600 * 1000 * (hours + offset))))
             .lt(new Date(Date.now() - (3600 * 1000 * offset)))
-        .sort('timeCreated', 'ascending')
-        .populate('profile', ['hash'])
+        .sort('field timeCreated')
+        .populate('profile', 'hash')
         .populate('average')
-        .run(function(err, records) {
+        .exec(function(err, records) {
             if (err) return next(err);
 
             var record = {};

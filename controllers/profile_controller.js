@@ -89,13 +89,13 @@ controller.show = function(req, res, next) {
 
     db.profiles
         .findOne({ 'hash' : hash })
-        .run(function(err, record) {
+        .exec(function(err, record) {
             if (err) return next(err);
 
             db.reports
                 .find({ profile: record._id })
                 .populate('average')
-                .run(function(err, reports) {
+                .exec(function(err, reports) {
                     if (err) return next(err);
 
                     var myReports = {};
@@ -143,16 +143,16 @@ controller.history = function(req, res, next) {
         .findOne({ 'hash' : hash })
         .populate('reports')
         .populate('average')
-        .run(function(err, record) {
+        .exec(function(err, record) {
             if (err) return next(err);
 
             db.reports
                 .find({ url: record.getUrl() })
                 .populate('profile')
                 .populate('average')
-                .sort('timeCreated', 'descending')
+                .sort('field -timeCreated')
                 .limit(limit).skip(offset)
-                .run(function(err, reports) {
+                .exec(function(err, reports) {
                     if (err) return next(err);
 
                     var data = {};
@@ -198,10 +198,10 @@ controller.recent = function(req, res, next) {
     var format = req.param('format');
 
     db.profiles.find({}, ['hash', 'reports'])
-        .sort('_id', -1)
+        .sort('field -_id')
         .populate('reports', ['hash','type','url','data'])
         .limit(req.param('limit') || 5)
-        .run(function(err, profiles) {
+        .exec(function(err, profiles) {
             if(err) next(err);
 
             if(format === undefined)
