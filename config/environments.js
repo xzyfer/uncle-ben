@@ -24,8 +24,8 @@ module.exports = function(app) {
         .set('host', os.hostname())
         .set('port', port)
         .set('ENV','production')
-        .set('cron.enabled', false)
-        .set('phantomjs.path', '/usr/local/bin/phantomjs')
+        .set('cron.enabled', true)
+        .set('phantomjs.path', 'phantomjs')
     });
 
     return app
