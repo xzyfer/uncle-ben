@@ -24,45 +24,60 @@ var Report = module.exports = new Schema({
 
 Report.methods.getAverage = function getAverage (callback) {
     this.db.model('Average').findById(this.average, callback);
-}
+};
 
 mapFunction = function() {
     var obj = { count: 1, region: this.region };
 
-    for( i in this.data ) {
+    for( var i in this.data ) {
         if(this.data.hasOwnProperty(i)) {
-            obj[i] = parseInt(this.data[i], 10);
+            var value = parseInt(this.data[i], 10);
+            obj[i] = {
+                sum: value,
+                min: value,
+                max: value,
+                count: 1,
+                diff: 0
+            };
         }
     }
 
     emit(this.urlHash + "-" + this.type, obj);
 };
 
-reduceFunction = function(key, value) {
-    var result = { count: 0 };
+reduceFunction = function(key, values) {
+    for(var i = 0; i < values.length; i++) {
+        for(var j in values[i]) {
+            if(values[i].hasOwnProperty(j) && j !== 'count' && j !== 'region') {
 
-    value.forEach(function(row) {
-        result.count += row.count;
-        result.region = result.region || row.region;
+                var a = values[0][j];
+                var b = values[i][j];
 
-        for(i in row) {
-            if(row.hasOwnProperty(i)) {
-                if(i !== 'count' && i !== 'region') {
-                    result[i] = (result[i] || 0) + row[i];
-                }
+                // temp helpers
+                var delta = a.sum/a.count - b.sum/b.count; // a.mean - b.mean
+                var weight = (a.count * b.count)/(a.count + b.count);
+
+                // do the reducing
+                a.diff += b.diff + delta*delta*weight;
+                a.sum += b.sum;
+                a.count += b.count;
+                a.min = Math.min(a.min, b.min);
+                a.max = Math.max(a.max, b.max);
             }
         }
-    });
+    }
 
+    var result = values[0];
+    values.region = values.region;
     return result;
 };
 
 finalizeFunction = function(key, value) {
-    for(i in value) {
-        if(value.hasOwnProperty(i)) {
-            if(i !== 'count' && i !== 'region' && value[i] > 0) {
-                value[i] = value[i] / value.count;
-            }
+    for(var i in value) {
+        if(value.hasOwnProperty(i) && i !== 'count' && i !== 'region') {
+            value[i].avg = value[i].sum / value[i].count;
+            value[i].variance = value[i].diff / value[i].count;
+            value[i].stddev = Math.sqrt(value[i].variance);
         }
     }
 

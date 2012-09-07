@@ -24,7 +24,7 @@ block content
                 tr
                     td.td #{type}
                     each row in app.set('reporter').getDefinition(type)
-                        td.td #{reports.average.value[row.key]}
+                        td.td #{parseInt(reports.average.value[row.key].avg, 10)}
 
         h5.center History
 
