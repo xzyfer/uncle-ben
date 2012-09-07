@@ -4,89 +4,88 @@ block content
     #graphs
 
 block scripts
-    script(src='//www.google.com/jsapi')
+    script(src='/javascripts/lib/highcharts/highcharts.js')
+    script(src='/javascripts/lib/highcharts/modules/exporting.js')
 
     script
         var json = JSON.parse('!{JSON.stringify(reports)}');
 
-        google.load("visualization", "1", {packages:["corechart"]});
-        google.setOnLoadCallback(drawChart);
-
-
-        function MyChart(node) {
-            var chart = new google.visualization.AreaChart(node);
-
-            var dataTable = new google.visualization.DataTable();
-            dataTable.addColumn('datetime', 'Time');
-            dataTable.addColumn('number', 'onLoad');
-            dataTable.addColumn('number', 'warning');
-            dataTable.addColumn('number', 'critical');
-
-            var type = 'frontend';
-            var data = [];
-            var threshold = json[url][type][0].average.onLoad;
-
-            for( report in json[url][type] ) {
-                if( report > 0) {
-                    var prevRecord = json[url][type][report - 1];
-                }
-                var record = json[url][type][report];
-                var time = new Date(record.time);
-                var value = record.onLoad;
-
-                if(value <= threshold) {
-                    if(prevRecord && prevRecord.onLoad > threshold) {
-                        var m = (prevRecord.onLoad - record.onLoad) / (new Date(prevRecord.time).getTime() - new Date(record.time).getTime());
-                        var c = record.onLoad - (m * new Date(record.time).getTime());
-                        var x = (threshold - c) / m;
-
-                        dataTable.addRow([new Date(x), threshold, threshold, null]);
-                    }
-
-                    dataTable.addRow([time, value, null, null]);
-                } else if(value > threshold) {
-                    if(prevRecord && value <= threshold) {
-                        var m = (prevRecord.onLoad - record.onLoad) / (new Date(prevRecord.time).getTime() - new Date(record.time).getTime());
-                        var c = record.onLoad - (m * new Date(record.time).getTime());
-                        var x = (threshold - c) / m;
-
-                        dataTable.addRow([new Date(x), threshold, null, null]);
-                    }
-
-                    dataTable.addRow([time, value, value, null]);
-                }
-                dataTable.setRowProperty(dataTable.D.length - 1, 'url', record.url);
-            }
-            dataTable.addRows(data);
-
-            chart.draw(dataTable, {
-                title : url + ' (onLoad)',
-                curveType: "function",
-                isStacked: false,
-                width: 600,
-                height: 400,
-                series: [
-                  {color: 'green', visibleInLegend: true},
-                  {color: 'yellow', visibleInLegend: false},
-                  {color: 'red', visibleInLegend: false}
-                ],
-                vAxis: {title: "Time (ms)", viewWindow: {min: 0}},
-                hAxis: {title: "Date"}
-            });
-
-            google.visualization.events.addListener(chart, 'select', selectHandler);
-            function selectHandler(a,b,c) {
-                window.location = dataTable.getRowProperty(chart.getSelection()[0].row, 'url');
-            };
-        }
-
-        function drawChart() {
+        $(function() {
             for( url in json ) {
-
                 var node = $('<div />').addClass('graph');
                 $('#graphs').append(node);
 
                 new MyChart(node[0]);
-
             }
-        };
+        });
+
+
+        function MyChart(node) {
+
+            var type = 'frontend';
+            var data = [];
+            var series = [{
+                name: 'onLoad',
+                data: []
+            },{
+                name: 'domReady',
+                data: []
+            },{
+                name: 'firstByte',
+                data: []
+            }];
+
+            for( report in json[url][type] ) {
+                var record = json[url][type][report];
+                var time = new Date(record.time).getTime();
+
+                series[2].data.push([time, record.firstByte]);
+                series[1].data.push([time, record.onContentLoad]);
+                series[0].data.push([time, record.onLoad]);
+            }
+            console.log(series);
+            new Highcharts.Chart({
+                chart: {
+                    renderTo: node,
+                    type: 'area'
+                },
+                title: {
+                    text: url
+                },
+                xAxis: {
+                    type: 'datetime',
+                    dateTimeLabelFormats: { // don't display the dummy year
+                        month: '%e. %b',
+                        year: '%b'
+                    }
+                },
+                yAxis: {
+                    title: {
+                        text: 'Milliseconds'
+                    },
+                    labels: {
+                        formatter: function() {
+                            return Highcharts.numberFormat(this.value, 0, ',');
+                        }
+                    }
+                },
+                tooltip: {
+                    formatter: function() {
+                        return ''+
+                            Highcharts.numberFormat(this.y, 0, ',') +' ms';
+                    }
+                },
+                plotOptions: {
+                    area: {
+                        stacking: 'normal',
+                        lineColor: '#666666',
+                        lineWidth: 1,
+                        marker: {
+                            lineWidth: 1,
+                            lineColor: '#666666'
+                        }
+                    }
+                },
+                series: series
+            });
+        }

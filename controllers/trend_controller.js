@@ -69,7 +69,8 @@ controller.index = function(req, res, next) {
                 res.render('trend/index', {
                     title : 'Trends',
                     reports : reports,
-                    metrics : metrics
+                    metrics : metrics,
+                    startDate: Date.now() - (3600 * 1000 * (hours + offset))
                 });
             } else if(req.param('format', 'html') === 'json') {
                 res.send({ reports : reports });
