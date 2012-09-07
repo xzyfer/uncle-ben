@@ -81,9 +81,16 @@ block scripts
                         lineColor: '#666666',
                         lineWidth: 1,
                         marker: {
-                            lineWidth: 1,
-                            lineColor: '#666666'
-                        }
+                            enabled: false,
+                            states: {
+                                hover: {
+                                    enabled: true,
+                                    symbol: 'circle',
+                                    radius: 5,
+                                    lineWidth: 1
+                                }
+                            }
+                        },
                     }
                 },
                 series: series
