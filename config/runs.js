@@ -22,6 +22,9 @@ module.exports = function(app) {
           , {
                 'url' : 'http://99designs.com/launch?nocache'
             }
+          , {
+                'url' : 'http://99designs.com/logo-design'
+            }
         ]
     }};
 
