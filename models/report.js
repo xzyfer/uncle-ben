@@ -91,9 +91,8 @@ Report.post('save', function(report) {
 
     this.db.db.executeDbCommand({
         mapreduce   : "reports"
-      , query       : { 'urlHash' : this.urlHash, 'type' : this.type, 'region' : this.region }
+      , query       : { 'urlHash' : this.urlHash, 'type' : this.type, 'region' : this.region, 'timeCreated' : { $gt : Date.now() - (3600 * 24 * 14 * 1000) }}
       , sort        : { '_id' : -1 }
-      , limit       : 10
       , map         : mapFunction.toString()
       , reduce      : reduceFunction.toString()
       , finalize    : finalizeFunction.toString()
