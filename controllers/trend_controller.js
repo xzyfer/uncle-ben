@@ -58,7 +58,7 @@ controller.index = function(req, res, next) {
                 reports[record.url][record.type].push(
                     _u.extend({}, record.data, {
                         'time' : record.timeCreated
-                      , 'average' : record.average === undefined ? 0 : record.average.value
+                      , 'average' : record.average == null ? 0 : record.average.value
                       , 'hash' : record.profile.hash
                       , 'url' : '/profile/' + record.profile.hash
                     })
