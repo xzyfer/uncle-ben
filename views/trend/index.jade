@@ -26,13 +26,16 @@ block scripts
             var data = [];
             var series = [{
                 name: 'onLoad',
-                data: []
+                data: [],
+                visible: true
             },{
                 name: 'domReady',
-                data: []
+                data: [],
+                visible: false
             },{
                 name: 'firstByte',
-                data: []
+                data: [],
+                visible: false
             }];
 
             for( report in json[url][type] ) {
