@@ -51,7 +51,7 @@ controller.new = function(req, res, next) {
 controller.create = function(req, res, next) {
     var format = req.param('format')
       , url = req.param('url').trim()
-      , proxy = new Proxy();
+      , proxy = new Proxy({ desiredCapabilities: { 'chrome.binary' : '/usr/lib/chromium-browser/chromium-browser' }});
 
     proxy.doHAR(url, function(err, data) {
         if (err) {
