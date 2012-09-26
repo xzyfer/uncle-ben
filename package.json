@@ -15,7 +15,8 @@
     "mongoose": "~3.0.3",
     "curlrequest": "~0.3.5",
     "cron": "~0.3.3",
-    "cluster": "~0.7.7"
+    "cluster": "~0.7.7",
+    "browsermob-proxy": "~1.0.5"
   },
   "devDependencies": {
     "nodemon": "~0.6.18",

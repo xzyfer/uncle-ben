@@ -10,15 +10,16 @@ var shell = require('shelljs')
   , controller = {}
   , app
   , db
+  , Proxy = require('browsermob-proxy').Proxy
 ;
 
 // Constructor
 
 module.exports = function (_app) {
-    app = _app
-    db  = app.set('db')
-    return controller
-}
+    app = _app;
+    db  = app.set('db');
+    return controller;
+};
 
 /**
  * New Profile
@@ -35,7 +36,7 @@ controller.new = function(req, res, next) {
     res.render('profile/new', {
         title: 'Uncle Ben'
     });
-}
+};
 
 /**
  * Create Profile
@@ -48,26 +49,31 @@ controller.new = function(req, res, next) {
  * @url /profile
  */
 controller.create = function(req, res, next) {
-    var format = req.param('format');
-    var url = req.param('url').trim();
-    var cmd = [req.app.set('phantomjs.path'), req.app.set('helpers') + '/netsniff.js' , '"' + url + '"'].join(' ');
+    var format = req.param('format')
+      , url = req.param('url').trim()
+      , proxy = new Proxy();
 
-    var output = shell.exec(cmd, {silent:true}).output;
-    var result = JSON.parse(output);
+    proxy.doHAR(url, function(err, data) {
+        if (err) {
+            console.error('ERROR: ' + err);
+        } else {
+            var result = JSON.parse(data)
+              , Profile = new db.profiles(result);
 
-    var Profile = new db.profiles(result);
-    Profile.region = app.set('region');
+            Profile.region = app.set('region');
 
-    // save the profile
-    Profile.save(function(err) {
-        if (err) return next(err);
+            // save the profile
+            Profile.save(function(err) {
+                if (err) return next(err);
 
-        req.app.emit('event:create_profile', { profile: Profile }, req);
+                req.app.emit('event:create_profile', { profile: Profile }, req);
 
-        if(format === undefined)
-            res.redirect('/profile/' + Profile.hash);
-        if(format === 'json')
-            res.send({ result : 'ok', hash: Profile.hash });
+                if(format === undefined)
+                    res.redirect('/profile/' + Profile.hash);
+                if(format === 'json')
+                    res.send({ result : 'ok', hash: Profile.hash });
+            });
+        }
     });
 };
 
